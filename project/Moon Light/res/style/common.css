@@ -1,0 +1,188 @@
+@set my-v-scrollbar
+{
+  :root {
+    background-color:#D1606A; /* background of the scrollbar itself */
+  }
+
+  .prev 
+  { 
+    border:1px solid #AAA; 
+    foreground-image:url( sb-v-scroll-prev.png ); 
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat; 
+  }
+  
+  .next 
+  { 
+    border:1px solid #AAA; 
+    foreground-image:url( sb-v-scroll-next.png ); 
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat; 
+  }
+  
+  .base,
+  .next-page, 
+  .prev-page 
+  { 
+    background-image:url( sb-scroll-back.png ); 
+    background-position:5px 5px 5px 5px; /*left top right bottom offsets*/
+    background-repeat:expand; 
+  }
+
+  .slider 
+  { 
+    border:1px solid #AAA; 
+    foreground-image:url( sb-scroll-slider.png ); 
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat; 
+  }
+  
+  .next:disabled, .slider:disabled, 
+  .prev:disabled  { height:0; border:none; foreground-image:none; }
+  
+  .base:disabled
+  {
+    background-image:url( sb-scroll-base.png ); 
+    background-repeat:repeat; 
+    background-position:0 0 0 0;
+  }
+    
+  .next:hover,   .slider:hover, 
+  .prev:hover     { background-color: #BD4A53; }
+  
+  .next:active,  .slider:active, 
+  .prev:active    { background-color: #BD4A53; }
+  
+  .base { width: 12dip; } /* explicit declaration of its width */
+  .corner { background-color: transparent; }
+}
+
+html
+{
+  behavior: windowSizer;
+  width:100%;
+  height:100%;          
+}
+
+body
+{
+  margin:0;
+  width: *;
+  height:*;
+  font: system;
+}
+
+.common-title-bar
+{
+  behavior:windowCommand;
+  width: *;
+  height: 60dip;
+  background-color: #CC7E86;
+  flow:horizontal;
+}
+
+.common-title-bar .title
+{
+  margin: 7dip;
+  margin-left: 10dip;
+  margin-right: auto;
+  color: #EEE;
+  font: bold;
+}
+
+.common-title-bar .buttons
+{
+  position:absolute;
+  height: 16dip;
+  right: 5dip;
+  top: 0dip;
+  margin: 10dip;
+  border: 2dip solid red;
+}
+
+.common-title-bar a[command]
+{
+  display: inline-block;
+  float: right;
+  color: antiquewhite;
+  font-family: "Marlett";
+  font-size: 14dip;
+  padding: 6dip 5dip 6dip 5dip;
+}
+
+.common-title-bar a[command]:hover
+{
+  background-color: #CC3544;
+  color: rgb(255, 255, 255)
+}
+
+.common-title-bar a[command]:active
+{
+  background-color: #CC0418;
+  color: #EEE;
+}  
+
+.common-title-bar a[command="window-resotore"]
+{
+  content: "2";
+} 
+
+.common-button
+{
+    background-color: #CC6670;
+    padding: 5dip;
+    cursor: pointer;
+    color:#EEE; 
+    font: system;    
+}
+
+.common-button:hover
+{
+    background-color: #be3643;    
+}
+
+.common-menu
+{
+  padding: 0;
+  border: none;
+}
+
+.common-menu li
+{
+  background-color:rgb(207, 88, 98);
+  color:#eee;
+}
+
+.common-menu li:hover
+{
+  background-color:rgb(209, 57, 70);
+}
+
+.common-menu hr
+{
+  border:1px solid rgb(209, 57, 70);
+  margin: 0;
+} 
+
+.common-ico
+{ 
+  padding: 5dip;
+  cursor: pointer;
+  color:#EEE; 
+  font-size: 15dip;
+}
+
+.common-ico:hover
+{
+  background-color: rgb(190, 54, 67);   
+}
+
+menu li[href]
+{
+    cursor: pointer;
+}
+
+menu li:checked
+{
+  background-color:rgb(209, 57, 70);
+}

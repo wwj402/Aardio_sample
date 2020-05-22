@@ -1,0 +1,24 @@
+; NTLinksMaker 1.3.0.370, by Peter and MVV
+
+[NTLinks Maker]
+; German messages (1252) - be careful with format parameters like "%s" and "%X"
+1=&Ja
+2=&Nein
+3=&OK
+4=Abbre&chen
+5=Ja zu &Allem
+6=Nein zu Allem
+7=&Alle ignorieren
+8=Erstelle &Link(s) für %d Objekt(e) als:
+9=Anzahl der Ebenen, die als &Ordner dupliziert werden:
+10=Fehler beim Erstellen des Link:\n%s\n\nZiel des Link:\n%s\n\nFehlerbeschreibung:\n
+11=Die Erstellung symbolischer Verknüpfungen benötigt erweiterte Rechte (Administratorrechte).
+12=Ihr Windows scheint symbolische Verknüpfungen nicht zu unterstützen.\n\nMöchten sie stattdessen Junctions (Abzweigungspunkte) und Hardlinks (harte Links) erstellen? 
+13=Erkenne relativen Pfad von Einträgen mit Verwendung dieses &Basispfades:
+14=Linkt&yp für Dateien:
+15=Hardlinks
+16=Symbolische Verknüpfung, wenn notwendig
+17=Nur symbolische Verknüpfung
+18=Junctions
+19=Relative symbolische Links
+20=Verknü&pfungsart für Ordner:

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="SciterSampleViewer" libEmbed="false" icon="..." ui="win" output="SciterSampleViewer.exe" CompanyName="单位名称" FileDescription="test" LegalCopyright="Copyright (C) 作者 2018" ProductName="test" InternalName="test" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="/Publish/" dstrip="false" local="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true" local="false">
+		<folder name="NTLinksMaker" path="res\NTLinksMaker" embed="true" comment="目录" local="false">
+			<file name="NTLinksMaker.exe" path="res\NTLinksMaker\NTLinksMaker.exe" comment="res\NTLinksMaker\NTLinksMaker.exe"/>
+			<file name="NTLinksMaker.ini" path="res\NTLinksMaker\NTLinksMaker.ini" comment="res\NTLinksMaker\NTLinksMaker.ini"/>
+			<folder name="Language" path="res\NTLinksMaker\Language" comment="res\NTLinksMaker\Language">
+				<file name="Chinese Simplified.lng" path="res\NTLinksMaker\Language\Chinese Simplified.lng" comment="res\NTLinksMaker\Language\Chinese Simplified.lng"/>
+				<file name="Danish.lng" path="res\NTLinksMaker\Language\Danish.lng" comment="res\NTLinksMaker\Language\Danish.lng"/>
+				<file name="English.lng" path="res\NTLinksMaker\Language\English.lng" comment="res\NTLinksMaker\Language\English.lng"/>
+				<file name="Englishchs.lng" path="res\NTLinksMaker\Language\Englishchs.lng" comment="res\NTLinksMaker\Language\Englishchs.lng"/>
+				<file name="German.lng" path="res\NTLinksMaker\Language\German.lng" comment="res\NTLinksMaker\Language\German.lng"/>
+				<file name="Korean.lng" path="res\NTLinksMaker\Language\Korean.lng" comment="res\NTLinksMaker\Language\Korean.lng"/>
+				<file name="Russian.lng" path="res\NTLinksMaker\Language\Russian.lng" comment="res\NTLinksMaker\Language\Russian.lng"/>
+				<file name="zh_CN.lng" path="res\NTLinksMaker\Language\zh_CN.lng" comment="res\NTLinksMaker\Language\zh_CN.lng"/>
+			</folder>
+		</folder>
+	</folder>
+	<file name="main2.aardio" path="main2.aardio" comment="main2.aardio"/>
+</project>

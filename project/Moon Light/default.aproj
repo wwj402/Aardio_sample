@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="Moon Light" libEmbed="false" icon="crescent_moon_128px_1179436_easyicon.net.ico" ui="win" output="Moon Light.exe" CompanyName="Moon Light" FileDescription="Moon Light" LegalCopyright="Copyright (C) Moon Light 2018" ProductName="Moon Light" InternalName="Moon Light" FileVersion="0.0.0.263" ProductVersion="0.0.0.263" publishDir="\Debug\" dstrip="false" local="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true" local="false">
+		<file name="ass_template" path="res\ass_template" comment="res\ass_template"/>
+		<file name="bar.html" path="res\bar.html" comment="res\bar.html"/>
+		<file name="bar_lt.html" path="res\bar_lt.html" comment="res\bar_lt.html"/>
+		<file name="edit-back.png" path="res\edit-back.png" comment="res\edit-back.png"/>
+		<file name="frmAddRoom.html" path="res\frmAddRoom.html" comment="res\frmAddRoom.html"/>
+		<file name="frmAddRoom_lt.html" path="res\frmAddRoom_lt.html" comment="res\frmAddRoom_lt.html"/>
+		<file name="main.html" path="res\main.html" comment="res\main.html"/>
+		<file name="main_lt.html" path="res\main_lt.html" comment="res\main_lt.html"/>
+		<file name="slider button.png" path="res\slider button.png" comment="res\slider button.png"/>
+		<folder name="fonts" path="res\fonts" comment="res\fonts" local="false" embed="false">
+			<file name="fontawesome-webfont.eot" path="res\fonts\fontawesome-webfont.eot" comment="res\fonts\fontawesome-webfont.eot"/>
+			<file name="fontawesome-webfont.svg" path="res\fonts\fontawesome-webfont.svg" comment="res\fonts\fontawesome-webfont.svg"/>
+			<file name="fontawesome-webfont.ttf" path="res\fonts\fontawesome-webfont.ttf" comment="res\fonts\fontawesome-webfont.ttf"/>
+			<file name="fontawesome-webfont.woff" path="res\fonts\fontawesome-webfont.woff" comment="res\fonts\fontawesome-webfont.woff"/>
+			<file name="fontawesome-webfont.woff2" path="res\fonts\fontawesome-webfont.woff2" comment="res\fonts\fontawesome-webfont.woff2"/>
+			<file name="FontAwesome.otf" path="res\fonts\FontAwesome.otf" comment="res\fonts\FontAwesome.otf"/>
+		</folder>
+		<folder name="layout" path="res\layout" comment="res\layout" local="false" embed="false">
+			<file name="frmAddRoom.aardio" path="res\layout\frmAddRoom.aardio" comment="res\layout\frmAddRoom.aardio"/>
+			<file name="frmBar.aardio" path="res\layout\frmBar.aardio" comment="res\layout\frmBar.aardio"/>
+			<file name="frmPlayer.aardio" path="res\layout\frmPlayer.aardio" comment="res\layout\frmPlayer.aardio"/>
+		</folder>
+		<folder name="sciter" path="res\sciter" comment="res\sciter" local="false" embed="false">
+			<file name="animations.tis" path="res\sciter\animations.tis" comment="res\sciter\animations.tis"/>
+			<file name="ddm.tis" path="res\sciter\ddm.tis" comment="res\sciter\ddm.tis"/>
+			<file name="ddm2.tis" path="res\sciter\ddm2.tis" comment="res\sciter\ddm2.tis"/>
+			<file name="decorators.tis" path="res\sciter\decorators.tis" comment="res\sciter\decorators.tis"/>
+			<file name="ease-functions.tis" path="res\sciter\ease-functions.tis" comment="res\sciter\ease-functions.tis"/>
+			<file name="frmAddRoom.aardio" path="res\sciter\frmAddRoom.aardio" comment="res\sciter\frmAddRoom.aardio"/>
+			<file name="frmBar.aardio" path="res\sciter\frmBar.aardio" comment="res\sciter\frmBar.aardio"/>
+			<file name="frmPlayer.aardio" path="res\sciter\frmPlayer.aardio" comment="res\sciter\frmPlayer.aardio"/>
+		</folder>
+		<folder name="style" path="res\style" comment="res\style" local="false" embed="false">
+			<file name="common.css" path="res\style\common.css" comment="res\style\common.css"/>
+			<file name="font-awesome.css" path="res\style\font-awesome.css" comment="res\style\font-awesome.css"/>
+			<file name="sb-h-scroll-next.png" path="res\style\sb-h-scroll-next.png" comment="res\style\sb-h-scroll-next.png"/>
+			<file name="sb-h-scroll-prev.png" path="res\style\sb-h-scroll-prev.png" comment="res\style\sb-h-scroll-prev.png"/>
+			<file name="sb-scroll-back.png" path="res\style\sb-scroll-back.png" comment="res\style\sb-scroll-back.png"/>
+			<file name="sb-scroll-base.png" path="res\style\sb-scroll-base.png" comment="res\style\sb-scroll-base.png"/>
+			<file name="sb-scroll-slider.png" path="res\style\sb-scroll-slider.png" comment="res\style\sb-scroll-slider.png"/>
+			<file name="sb-v-scroll-next.png" path="res\style\sb-v-scroll-next.png" comment="res\style\sb-v-scroll-next.png"/>
+			<file name="sb-v-scroll-prev.png" path="res\style\sb-v-scroll-prev.png" comment="res\style\sb-v-scroll-prev.png"/>
+		</folder>
+		<folder name="website icon" path="res\website icon" comment="res\website icon">
+			<file name="bilibili.ico" path="res\website icon\bilibili.ico" comment="res\website icon\bilibili.ico"/>
+			<file name="douyu.ico" path="res\website icon\douyu.ico" comment="res\website icon\douyu.ico"/>
+			<file name="huya.ico" path="res\website icon\huya.ico" comment="res\website icon\huya.ico"/>
+			<file name="kingkong.ico" path="res\website icon\kingkong.ico" comment="res\website icon\kingkong.ico"/>
+			<file name="longzhu.ico" path="res\website icon\longzhu.ico" comment="res\website icon\longzhu.ico"/>
+			<file name="panda.ico" path="res\website icon\panda.ico" comment="res\website icon\panda.ico"/>
+			<file name="quanmin.ico" path="res\website icon\quanmin.ico" comment="res\website icon\quanmin.ico"/>
+			<file name="six.ico" path="res\website icon\six.ico" comment="res\website icon\six.ico"/>
+			<file name="yy.ico" path="res\website icon\yy.ico" comment="res\website icon\yy.ico"/>
+			<folder name="big" path="res\website icon\big" comment="res\website icon\big">
+				<file name="douyu.png" path="res\website icon\big\douyu.png" comment="res\website icon\big\douyu.png"/>
+				<file name="huya.png" path="res\website icon\big\huya.png" comment="res\website icon\big\huya.png"/>
+				<file name="longzhu.png" path="res\website icon\big\longzhu.png" comment="res\website icon\big\longzhu.png"/>
+				<file name="panda.png" path="res\website icon\big\panda.png" comment="res\website icon\big\panda.png"/>
+				<file name="yy.png" path="res\website icon\big\yy.png" comment="res\website icon\big\yy.png"/>
+			</folder>
+		</folder>
+	</folder>
+	<file name="main_layout.aardio" path="main_layout.aardio" comment="main_layout.aardio"/>
+</project>

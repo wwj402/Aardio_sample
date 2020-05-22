@@ -1,0 +1,26 @@
+; NTLinksMaker 1.4.0.402, hardcoded messages
+
+[NTLinks Maker]
+; English messages (1252) - be careful with format parameters like "%s" and "%X"
+1=&Yes
+2=&No
+3=&OK
+4=Can&cel
+5=Yes to &All
+6=N&o to All
+7=Ignore &all
+8=Create &link(s) for %d object(s) as:
+9=Number of levels to duplicate as &folders:
+10=Error creating link:\n%s\n\nLink target:\n%s\n\nError description:\n
+11=Symbolic link creation requires elevation (administrator rights).
+12=It seems that your Windows doesn't support symlinks (pre-Vista version with no Masatoshi Kimura driver installed).\n\nDo you want to create junctions and hardlinks instead?
+13=Keep partial paths of items relative to the following &base folder:
+14=Link t&ype for files:
+15=Hardlinks
+16=Symbolic links (if necessary)
+17=Symbolic links only
+18=Junctions
+19=Relative symbolic links
+20=Link ty&pe for folders:
+21=Keeping relative paths will be disabled because it requires a file name starting with an asterisk.
+22=Relative symbolic links (if possible)

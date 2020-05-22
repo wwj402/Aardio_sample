@@ -1,0 +1,127 @@
+﻿<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
+		<link rel="stylesheet" href="style/common.css">
+<!--
+	<script type="text/tiscript">
+		if( view.connectToInspector ) // the view is in debug mode
+  		view.connectToInspector();
+	</script>
+-->
+	<style>
+		@font-face {
+ 	 	font-family: 'FontAwesome';
+ 		 src: url('fonts/fontawesome-webfont.ttf?v=4.7.0');
+ 		 font-weight: normal;
+ 		 font-style: normal;
+		}
+		.main
+		{
+			width: *;
+			height: *;
+		}
+		.main > .container
+		{
+			background-color: rgb(206, 94, 106);
+			width: *;
+			height: *;
+		}
+		.main > .container .supported-website
+		{
+			behavior: ~supportedWebsite;
+			flow: horizontal-flow;
+			margin: 20dip;
+			height: 80%%;
+			overflow-y: auto;
+			vertical-scrollbar: my-v-scrollbar;
+		}
+		.main > .container .supported-website li.item
+		{
+			behavior: hyperlink;
+			width: 110dip;
+			height: 40dip;
+			margin: 15dip;
+			vertical-align: middle;
+		}
+		.main > .container .supported-website li.item .container
+		{
+			width: *;
+			flow: horizontal;
+		}
+		.main > .container .supported-website li.item img
+		{
+			width: 32dip;
+			height: 32dip;
+			vertical-align: middle;
+			//margin-left: 2dip;
+		}
+		 .main > .container .supported-website li.item span
+		{
+			margin-left: 2dip;
+			font-size: 15dip;
+			width: *;
+			height: *;
+			vertical-align: middle;
+		}
+		.main > .container .add-room-input
+		{
+			color: white;
+			margin: auto;
+			margin-right: *;
+			margin-left: *;
+			width: 400dip;
+			position: absolute;
+			bottom: 20dip;
+			flow: horizontal;
+		}
+		.main > .container .add-room-input #lable
+		{
+			display: inline-block;
+			//width: auto;
+		}
+		.main > .container .add-room-input input
+		{
+			width: *;
+			background-image: url( edit-back.png );
+			background-repeat: expand;
+			background-position: 5 5 5 5;
+			color: white;
+		}
+		.main > .container .add-room-input .common-button
+		{
+			display: inline-block;
+			//width: auto;
+			behavior: clickable;
+		}
+		.main > div.common-title-bar > div.title {
+			assigned!: self:value = "添加直播间";
+		}
+		.main > div.container > div.add-room-input > #lable {
+			assigned!: self:value = "直播间地址：";
+		}
+		.main > div.container > div.add-room-input > #add-room {
+			assigned!: self:value = "添加";
+		}
+	</style>
+	</head>
+	<body>
+		<div class="main">
+			<div class="common-title-bar" command="window-caption">
+				<div class=title>添加直播间</div>
+				<div class="bottons">
+					<a command="window-close">r</a>
+					<a command="window-max">1</a>
+					<a command="window-min">0</a>
+				</div>
+			</div>
+			<div class="container">
+				<span class="supported-website"></span>
+				<div class="add-room-input">
+					<span id="lable">直播间地址：</span>
+					<input type="text" name="room-url">
+					<span id="add-room" class="common-button">添加</span>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

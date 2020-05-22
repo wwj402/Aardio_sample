@@ -1,0 +1,457 @@
+﻿<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
+		<link rel="stylesheet" href="style/common.css">
+
+    <script type="text/tiscript">
+/*
+		if( view.connectToInspector ) // the view is in debug mode
+			view.connectToInspector(rootElement, "127.0.0.1");
+*/
+		include $url(sciter\ddm2.tis);
+		include $url(sciter\decorators.tis);
+		function self.ready() {
+		DragDrop2
+		{
+			what      : "#container.main .right-side .container .room-list .item",
+			where     : "#container.main .right-side .container .room-list",
+			container : "#container.main .right-side .container .room-list"
+			//notBefore : "tbody>tr.fixed",
+			//autoScroll: false
+			};
+		}
+
+	</script>
+
+	<style>
+		@font-face {
+			font-family: 'FontAwesome';
+			src: url('fonts/fontawesome-webfont.ttf?v=4.7.0');
+			font-weight: normal;
+			font-style: normal;
+		}
+		frameset
+		{  }
+
+		#container.main
+		{
+			flow: horizontal;
+			height: *;
+			width: *;
+			background-color: transparent;
+		}
+		#container.main splitter
+		{
+			behavior:splitter;
+			width:5dip;
+			height:*;
+		}
+		#container.main .right-side
+		{
+			width: 230dip;
+			height: *;
+			background-color: transparent;
+		}
+		#container.main .left-side
+		{
+			height: *;
+			width: *;
+			flow: stack;
+			background-color: transparent;
+		}
+		 #container.main .left-side #playerContainer
+		{
+			height:*;
+			width:*;
+			z-index:1;
+			visibility:visible;
+			background-color:transparent;
+		}
+		#container.main .left-side #playerContainer #player
+		{
+			behavior:player;
+			height:*;
+			width:*;
+		}
+		 #container.main .left-side #danmuContainer
+		{
+			height:*;
+			width:*;
+			z-index:2;
+			background-color:transparent;
+		}
+		 #container.main .left-side frame
+		{
+			height:*;
+			width:*;
+			z-index:3;
+			background-color:transparent;
+		}
+		#container.main .right-side .container
+		{
+			background-color: rgb(206, 94, 106);
+			height:*;
+			width:*;
+		}
+		#container.main .right-side .container .room-list
+		{
+			background-color:rgb(206, 94, 106);
+			margin:5dip 0;
+			vertical-scrollbar: my-v-scrollbar;
+			overflow-y:auto;
+			height:*;
+			width:*;
+			accept-drop: selector(#container.main .right-side .container .room-list .item);
+			drop: insert;
+		}
+		#container.main .right-side .container .danmu
+		{
+			background-color: black;
+			margin: 2dip 0;
+			padding: 2dip;
+			vertical-scrollbar: my-v-scrollbar;
+			overflow-y: auto;
+			height:*;
+			width:*;
+			white-space: prewrap;
+			word-wrap: break-word;
+			word-break: normal;
+		}
+		#container.main .right-side .container .danmu > li
+		{
+			margin:2dip 2dip;
+			overflow-y: auto;
+			width:*;
+			color: #FF7F00;
+		}
+		#container.main .right-side .container .danmu > li > span#nn
+		{
+			color: #DAA520;
+		}
+		#container.main .right-side .container .danmu > li > span#level
+		{
+			color: #FF69B4;
+		}
+		#container.main .right-side .container .danmu > li > span#txt
+		{
+			color: #7ac84b;
+		}
+		#container.main .right-side .container .danmu-opt
+		{
+			background-color: #CC7E86;
+			height: 40dip;
+			flow: horizontal;
+			vertical-align: middle;
+		}
+		#container.main .right-side .container .danmu-opt > #danmu-ass
+		{
+			vertical-align: middle;
+		}
+		#container.main .right-side .container .command-list
+		{
+			background-color: #CC7E86;
+			height: 40dip;
+			flow: horizontal;
+		}
+		#container.main .right-side .container .room-list .item
+		{
+			behavior: radio ~room-list-item;
+			background-color:rgb(209, 121, 129);
+			width:*;
+			height:50dip;
+			padding:5dip;
+			margin:7dip;
+			cursor: pointer;
+			flow:horizontal;
+			context-menu:selector(menu#room-command);
+			draggable: only-move;
+			position: relative;
+		}
+		#container.main .right-side .container .room-list .item:moving
+		{
+			background-color:rgb(189, 74, 83);
+		}
+		#container.main .right-side .container .room-list .item:hover,
+		#container.main .right-side .container .room-list .item:checked
+		{
+			background-color:rgb(189, 74, 83);
+		}
+		#container.main .right-side .container .room-list .item .avatar
+		{
+			width: 45dip;
+			height: 45dip;
+			margin-top: 3dip;
+		}
+		#container.main .right-side .container .room-list .item[live="false"] .avatar
+		{
+			foreground-image-transformation: colorize(#CEA8AC);
+		}
+		#container.main .right-side .container .room-list .item .owner-info
+		{
+			height: *;
+			width: *;
+			margin-left: 5dip;
+		}
+		#container.main .right-side .container .room-list .item .owner-info .owner-name
+		{
+			color:#EEE;
+			width: *;
+			height: *;
+			overflow: visible;
+		}
+		#container.main .right-side .container .room-list .item .owner-info .owner-website-icon
+		{
+			width: *;
+			height: *;
+			padding-left: 33dip;
+			foreground-size: 32dip;
+			foreground-repeat:no-repeat;
+		}
+
+/* 		#container.main .right-side .container .room-list .item[website="douyu"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.douyu.com/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="huya"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.huya.com/favicon.ico );
+		}
+		 #container.main .right-side .container .room-list .item[website="panda"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.panda.tv/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="bilibili"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.bilibili.com/favicon.ico );
+		}
+			#container.main .right-side .container .room-list .item[website="kingkong"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.kingkong.com/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="longzhu"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.longzhu.com/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="quanmin"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.quanmin.tv/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="six"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.6.cn/favicon.ico );
+		}
+		#container.main .right-side .container .room-list .item[website="yy"] .owner-info .owner-website-icon
+		{
+			foreground-image: url( https://www.yy.com/favicon.ico );
+		} */
+		#container.main .right-side .container .room-list .item .live-state
+		{
+			width: 13dip;
+			height: 13dip;
+			border-radius: 50%;
+			background-color: #CEA8AC;
+			position: absolute;
+			right: 5dip;
+			top: 5dip;
+		}
+		#container.main .right-side .container .room-list .item[live="true"] .live-state
+		{
+			background-color: #CE5E6A;
+		}
+		#container.main .right-side .container .command-list input.room-url
+		{
+			width:150dip;
+			margin-left:10dip;
+		}
+		#container.main .right-side .container .command-list #addRoom
+		{
+			behavior: clickable;
+		}
+		#container.main .right-side .container .command-list .common-ico
+		{
+			height: *;
+			width: 20dip;
+			vertical-align: middle;
+		}
+		#container.main .right-side .container .command-list .common-ico i
+		{
+			margin: auto;
+		}
+		#container.main .right-side .container .command-list #show-add-room-form
+		{
+			behavior: clickable;
+		}
+		menu.context > li[command="open-url"].room-list-item-right-menu {
+			behavior: menu-item;
+		}
+		menu.context > li[command="open-url"].room-list-item-right-menu {
+			assigned!: self:value = "在浏览器中打开";
+		}
+		menu.context>li[command="copy-url"].room-list-item-right-menu {
+			assigned!: self:value = "复制直播间地址";
+		}
+		menu.context>li[command="delete-room"].room-list-item-right-menu {
+			assigned!: self:value = "删除此直播间";
+		}
+.tabs 
+{
+  font:system;
+  behavior:tabs;
+  height:*;
+  width:*;
+  overflow:hidden;
+}
+
+.tabs > .strip /* tab strip */
+{
+  flow: horizontal;
+  margin-bottom:-1px;
+  padding: 2px 2px 0 2px;
+}
+
+.tabs > .strip > [panel] /* all tabs, passive by default */
+{
+  padding: 3px 8px;
+  margin-bottom:1px;
+  height: 100%%;
+  max-width: auto; /* not wider than max-intrinsic  */
+  background-image:url(theme:tab-item-normal);
+  background-repeat:stretch;
+}
+.tabs > .strip > [panel]:hover /* passive tab */
+{
+  background-image:url(theme:tab-item-hover);
+  transition:blend;
+}
+.tabs > .strip > [panel]:current  /*active tab*/
+{
+  background-image:url(theme:tab-item-selected);
+  margin:-2px -2px -1px -2px;
+  padding: 4px 10px 5px 10px; 
+  position:relative;
+}
+.tabs > .strip > [panel]:current:hover /*active tab*/
+{
+  background-image:url(theme:tab-item-selected);
+  transition:none;
+}
+
+.tabs > .strip > [panel]:current:first-child,
+.tabs > .strip > [panel]:current:hover:first-child
+{
+  background-image:url(theme:tab-item-leftmost-selected);
+}
+
+
+/*.tabs:focus .strip [panel]:current 
+{
+  background-image:url(theme:tab-item-focused);
+}*/
+
+.tabs:tab-focus > .strip > [panel]:current > * /* outline active tab content if we've gotten focus by tab*/
+{
+  outline: 1px dotted invert;
+}
+
+.tabs > [name]
+{ display:none; }
+
+.tabs > [name]:expanded
+{ 
+  background-image:url(theme:tab-panel);
+  background-repeat:stretch;
+  padding:4px;
+  display:block; 
+  height:100%%;
+}
+
+	</style>
+	</head>
+	<body>
+		<div id="container" class="main">
+		<frameset cols="*,">
+			<div .left-side .panel>
+				<div id="playerContainer">
+					<widget id="player" cls="custom"></widget>
+				</div>
+			</div>
+			<splitter />
+			<div .right-side .panel>
+				<div class="common-title-bar" command="window-caption">
+					<div class=title>Moon Light</div>
+					<div class="bottons">
+						<a command="window-close">r</a>
+						<a command="window-max">1</a>
+						<a command="window-min">0</a>
+					</div>
+				</div>
+				<div class="container">
+					<div class="tabs" id="righttabs">
+						<div class="strip" role="page-tab-list">
+							<div panel="panel-room" selected role="page-tab">房间列表</div>
+							<div panel="panel-danmu" role="page-tab">房间弹幕</div>
+						</div>
+					
+						<div name="panel-room">
+							<div class="container">
+								<div class="room-list">
+								</div>
+								<div class="command-list">
+									<div class="common-ico" id="show-add-room-form"><i class="fa fa-plus"></i></div>
+								</div>
+							</div>
+						</div>
+						<div name="panel-danmu">
+							<div class="container">
+								<div class="danmu">
+								</div>
+								<div class="danmu-opt">
+									<button type="checkbox" id="danmu-ass">.ass(720p)</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</frameset>
+		</div>
+		<menu class="context common-menu" id="room-command">
+			<li command="open-url" class="room-list-item-right-menu">在浏览器中打开</li>
+			<li command="copy-url" class="room-list-item-right-menu">复制直播间地址</li>
+			<hr>
+			<li command="delete-room" class="room-list-item-right-menu">删除此直播间</li>
+		</menu>
+	</body>
+</html>
+<!--
+				<div class="tabs" id="righttabs">
+					<div class="strip" role="page-tab-list">
+						<div panel="panel-room" selected role="page-tab">tab1 caption</div>
+						<div panel="panel-danmu" role="page-tab">tab2 caption</div>
+					</div>
+				
+					<div id="panel-room">
+						<div class="container">tab1 caption
+							<div class="room-list">
+							</div>
+							<div class="command-list">
+								<div class="common-ico" id="show-add-room-form"><i class="fa fa-plus"></i></div>
+							</div>
+						</div>
+					</div>
+				</div>
+-->
+<!--
+			<toolbar id="sidebar">
+				<button><i class="fa fa-list"></i></button>
+			</toolbar>
+				<div class="room-list">
+				</div>
+				<div class="danmu">
+				</div>
+				<div class="command-list">
+					<div class="common-ico" id="show-add-room-form"><i class="fa fa-plus"></i></div>
+					<button|checkbox #danmu-visibility>弹幕</button>
+				</div>
+-->

@@ -1,0 +1,24 @@
+; NTLinksMaker 1.3.0.370, by petermad and MVV
+
+[NTLinks Maker]
+; Danish messages (1252) - be careful with format parameters like "%s" and "%X"
+1=&Ja
+2=&Nej
+3=&OK
+4=A&nnuller
+5=Ja til &Alt
+6=N&ej til Alt
+7=Ignorer &alle
+8=Opret &link(s) for %d element(er) som:
+9=Antal niveauer, der skal duplikeres som &mapper:
+10=Fejl ved oprettelse af link:\n%s\n\nLink destination:\n%s\n\nFejlbeskrivelse:\n
+11=Oprettelse af Symlink kræver eleverede (administrator) rettigheder.
+12=Det lader til at din Windows version ikke understøtter Symlinks.\n\nØnsker du at oprette Junctions eller Hardlinks i stedet?
+13=Find relative stier for elementer ud fra følgende &basis-sti:
+14=Link-t&ype til filer:
+15=Hardlinks
+16=Symlinks hvis nødvendigt
+17=Kun Symlinks
+18=Junctions
+19=Relative Symlinks
+20=Link-ty&pe til mapper:

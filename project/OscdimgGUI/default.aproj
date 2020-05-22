@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="oscdimgGUI" libEmbed="true" icon="..." ui="win" output="oscdimgGUI.exe" CompanyName="Moon Light" FileDescription="oscdimgGUI" LegalCopyright="Copyright (C) Moon Light 2020" ProductName="oscdimgGUI" InternalName="oscdimgGUI" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="/dist/" dstrip="false" local="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true" local="false">
+		<file name="El Torito (CD-ROM standard) - Wikipedia.html" path="res\El Torito (CD-ROM standard) - Wikipedia.html" comment="res\El Torito (CD-ROM standard) - Wikipedia.html"/>
+		<file name="index.html" path="res\index.html" comment="res\index.html"/>
+		<file name="ISO 9660 - Wikipedia.html" path="res\ISO 9660 - Wikipedia.html" comment="res\ISO 9660 - Wikipedia.html"/>
+		<file name="ISO image - Wikipedia.html" path="res\ISO image - Wikipedia.html" comment="res\ISO image - Wikipedia.html"/>
+		<file name="Joliet (file system) - Wikipedia.html" path="res\Joliet (file system) - Wikipedia.html" comment="res\Joliet (file system) - Wikipedia.html"/>
+		<file name="Universal Disk Format - Wikipedia.html" path="res\Universal Disk Format - Wikipedia.html" comment="res\Universal Disk Format - Wikipedia.html"/>
+		<folder name="El Torito (CD-ROM standard) - Wikipedia_files" path="res\El Torito (CD-ROM standard) - Wikipedia_files" comment="res\El Torito (CD-ROM standard) - Wikipedia_files">
+			<file name="17px-WMA_button2b.png" path="res\El Torito (CD-ROM standard) - Wikipedia_files\17px-WMA_button2b.png" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\17px-WMA_button2b.png"/>
+			<file name="50px-Question_book-new.svg.png" path="res\El Torito (CD-ROM standard) - Wikipedia_files\50px-Question_book-new.svg.png" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\50px-Question_book-new.svg.png"/>
+			<file name="load(1).php" path="res\El Torito (CD-ROM standard) - Wikipedia_files\load(1).php" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\load(1).php"/>
+			<file name="load(2).php" path="res\El Torito (CD-ROM standard) - Wikipedia_files\load(2).php" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\load(2).php"/>
+			<file name="load.php" path="res\El Torito (CD-ROM standard) - Wikipedia_files\load.php" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\load.php"/>
+			<file name="poweredby_mediawiki_88x31.png" path="res\El Torito (CD-ROM standard) - Wikipedia_files\poweredby_mediawiki_88x31.png" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\poweredby_mediawiki_88x31.png"/>
+			<file name="wikimedia-button.png" path="res\El Torito (CD-ROM standard) - Wikipedia_files\wikimedia-button.png" comment="res\El Torito (CD-ROM standard) - Wikipedia_files\wikimedia-button.png"/>
+		</folder>
+		<folder name="ISO 9660 - Wikipedia_files" path="res\ISO 9660 - Wikipedia_files" comment="res\ISO 9660 - Wikipedia_files">
+			<file name="16px-Folder_Hexagonal_Icon.svg.png" path="res\ISO 9660 - Wikipedia_files\16px-Folder_Hexagonal_Icon.svg.png" comment="res\ISO 9660 - Wikipedia_files\16px-Folder_Hexagonal_Icon.svg.png"/>
+			<file name="220px-Iso9660directoryTree.png" path="res\ISO 9660 - Wikipedia_files\220px-Iso9660directoryTree.png" comment="res\ISO 9660 - Wikipedia_files\220px-Iso9660directoryTree.png"/>
+			<file name="50px-Question_book-new.svg.png" path="res\ISO 9660 - Wikipedia_files\50px-Question_book-new.svg.png" comment="res\ISO 9660 - Wikipedia_files\50px-Question_book-new.svg.png"/>
+			<file name="load(1).php" path="res\ISO 9660 - Wikipedia_files\load(1).php" comment="res\ISO 9660 - Wikipedia_files\load(1).php"/>
+			<file name="load(2).php" path="res\ISO 9660 - Wikipedia_files\load(2).php" comment="res\ISO 9660 - Wikipedia_files\load(2).php"/>
+			<file name="load.php" path="res\ISO 9660 - Wikipedia_files\load.php" comment="res\ISO 9660 - Wikipedia_files\load.php"/>
+			<file name="poweredby_mediawiki_88x31.png" path="res\ISO 9660 - Wikipedia_files\poweredby_mediawiki_88x31.png" comment="res\ISO 9660 - Wikipedia_files\poweredby_mediawiki_88x31.png"/>
+			<file name="wikimedia-button.png" path="res\ISO 9660 - Wikipedia_files\wikimedia-button.png" comment="res\ISO 9660 - Wikipedia_files\wikimedia-button.png"/>
+		</folder>
+		<folder name="ISO image - Wikipedia_files" path="res\ISO image - Wikipedia_files" comment="res\ISO image - Wikipedia_files">
+			<file name="50px-Question_book-new.svg.png" path="res\ISO image - Wikipedia_files\50px-Question_book-new.svg.png" comment="res\ISO image - Wikipedia_files\50px-Question_book-new.svg.png"/>
+			<file name="load(1).php" path="res\ISO image - Wikipedia_files\load(1).php" comment="res\ISO image - Wikipedia_files\load(1).php"/>
+			<file name="load(2).php" path="res\ISO image - Wikipedia_files\load(2).php" comment="res\ISO image - Wikipedia_files\load(2).php"/>
+			<file name="load.php" path="res\ISO image - Wikipedia_files\load.php" comment="res\ISO image - Wikipedia_files\load.php"/>
+			<file name="poweredby_mediawiki_88x31.png" path="res\ISO image - Wikipedia_files\poweredby_mediawiki_88x31.png" comment="res\ISO image - Wikipedia_files\poweredby_mediawiki_88x31.png"/>
+			<file name="wikimedia-button.png" path="res\ISO image - Wikipedia_files\wikimedia-button.png" comment="res\ISO image - Wikipedia_files\wikimedia-button.png"/>
+		</folder>
+		<folder name="Joliet (file system) - Wikipedia_files" path="res\Joliet (file system) - Wikipedia_files" comment="res\Joliet (file system) - Wikipedia_files">
+			<file name="load(1).php" path="res\Joliet (file system) - Wikipedia_files\load(1).php" comment="res\Joliet (file system) - Wikipedia_files\load(1).php"/>
+			<file name="load(2).php" path="res\Joliet (file system) - Wikipedia_files\load(2).php" comment="res\Joliet (file system) - Wikipedia_files\load(2).php"/>
+			<file name="load.php" path="res\Joliet (file system) - Wikipedia_files\load.php" comment="res\Joliet (file system) - Wikipedia_files\load.php"/>
+			<file name="poweredby_mediawiki_88x31.png" path="res\Joliet (file system) - Wikipedia_files\poweredby_mediawiki_88x31.png" comment="res\Joliet (file system) - Wikipedia_files\poweredby_mediawiki_88x31.png"/>
+			<file name="wikimedia-button.png" path="res\Joliet (file system) - Wikipedia_files\wikimedia-button.png" comment="res\Joliet (file system) - Wikipedia_files\wikimedia-button.png"/>
+		</folder>
+		<folder name="Universal Disk Format - Wikipedia_files" path="res\Universal Disk Format - Wikipedia_files" comment="res\Universal Disk Format - Wikipedia_files">
+			<file name="load(1).php" path="res\Universal Disk Format - Wikipedia_files\load(1).php" comment="res\Universal Disk Format - Wikipedia_files\load(1).php"/>
+			<file name="load(2).php" path="res\Universal Disk Format - Wikipedia_files\load(2).php" comment="res\Universal Disk Format - Wikipedia_files\load(2).php"/>
+			<file name="load.php" path="res\Universal Disk Format - Wikipedia_files\load.php" comment="res\Universal Disk Format - Wikipedia_files\load.php"/>
+			<file name="poweredby_mediawiki_88x31.png" path="res\Universal Disk Format - Wikipedia_files\poweredby_mediawiki_88x31.png" comment="res\Universal Disk Format - Wikipedia_files\poweredby_mediawiki_88x31.png"/>
+			<file name="wikimedia-button.png" path="res\Universal Disk Format - Wikipedia_files\wikimedia-button.png" comment="res\Universal Disk Format - Wikipedia_files\wikimedia-button.png"/>
+		</folder>
+	</folder>
+	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false">
+		<file name="frmtabini.aardio" path="dlg\frmtabini.aardio" comment="dlg\frmtabini.aardio"/>
+		<file name="frmtaboutput.aardio" path="dlg\frmtaboutput.aardio" comment="dlg\frmtaboutput.aardio"/>
+	</folder>
+</project>

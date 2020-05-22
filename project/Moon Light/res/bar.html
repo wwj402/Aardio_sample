@@ -1,0 +1,287 @@
+﻿<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
+		<link rel="stylesheet" href="style/common.css">
+<!--    <script type="text/tiscript">
+			if( view.connectToInspector ) // the view is in debug mode
+			view.connectToInspector();
+		</script>
+-->
+	<style>
+		@font-face {
+ 		font-family: 'FontAwesome';
+ 		src: url('fonts/fontawesome-webfont.ttf?v=4.7.0');
+ 		font-weight: normal;
+		font-style: normal;
+		}
+		html,body
+		{
+			background: transparent;
+		}
+
+		#container
+		{
+			width:*;
+			height:*;
+			flow:stack;
+		}
+		#container > #danmu
+		{
+			size:* *;
+			padding:10dip;
+			flow:vertical;
+			overflow:hidden;
+		}
+		#container > #danmu > li
+		{
+			var(liw):2000px;
+			var(divw):-2000px;
+			var(ddt):8s;
+			margin:2dip 2dip;
+			width:*;//max-content
+			color:#FF7F00;
+			font-size:20dip;
+			flow:stack;
+			overflow:hidden;
+		}
+		#container > #danmu > li > div
+		{
+			width:max-content;
+			color:#EEE;
+			transform:translate(var(liw,100%),0%);
+			transition: transform(linear,8s);
+		}
+		#container > #danmu > li > div[move="set"]
+		{
+			transform:translate(var(divw,-100%),0%);
+		}
+		#container #bottom
+		{
+			flow:horizontal;
+			height:25dip;
+			width: 350dip;
+			margin-left:*;
+			margin-right:*;
+			margin-top:*;
+			margin-bottom:20dip;
+			padding: 10dip;
+			bottom:20dip;
+			background-color:rgba(206, 94, 106, 0.788);
+			vertical-align:middle;
+		}
+		.common-ico
+		{
+			font-size:20dip;
+			vertical-align:middle;
+		}
+		#container #bottom .ico
+		{
+			font-size:20dip;
+			display:inline-block;
+			vertical-align:middle;
+		}
+
+		[type="checkbox"]
+		{
+			 behavior:check;
+			 cursor:pointer;
+		}
+
+		.danmu-block
+		{
+			visibility:visible;
+			color:#EEE;
+		}
+		.sidebar-block
+		{
+			visibility:visible;
+			color:#EEE;
+		}
+
+		.vol-block
+		{
+			width: 170ip;
+			color:#EEE;
+			margin-top:*;
+			margin-bottom:*;
+		}
+
+		.danmu-block .danmu
+		{
+			behavior:check ~danmu-ico;
+		}
+
+		#container  #bottom .vol-ico
+		{
+			behavior:check ~vol-ico;
+			width:26dip;
+		}
+
+		#container  #bottom .vol-hslider
+		{
+			behavior:slider ~vol-slider;
+			width: 65dip;
+		}
+
+		.ico-check .ico-check-on,
+		.ico-check:checked .ico-check-off
+		{
+			display: none;
+		}
+
+		.ico-check:checked .ico-check-on{
+			display: inline-block;
+		}
+
+		[type="hslider"] > img.slider
+		{
+			foreground-image:url(slider button.png);
+			foreground-image-transformation: colorize(red);
+			background-image:none;
+		}
+
+		.reload-block
+		{
+			behavior: ~reload;
+		}
+
+		.stop-block
+		{
+			behavior: ~stop;
+		}
+		#container #bottom .sidebar
+		{
+			assigned!:
+				self:checked = true;
+		}
+		.setting-block
+		{
+			behavior: popup-menu;
+			margin-left: *;
+			width: 20dip;
+		}
+
+		.audio-output-device
+		{
+			behavior: ~audio-output-device;
+		}
+
+		.black-screen-patch li
+		{
+			behavior: radio ~black-screen-patch;
+		}
+	@set std-toggle {
+		
+		:root {
+			display:inline-block;
+			behavior:check;
+			flow:stack;
+			border:none;
+			background:none;
+			width:max-content;
+			height:1.4em;
+			padding:0 0 0 38dip;
+			cursor:pointer;
+		}
+
+		:root[type="radio"] { behavior:radio; }
+
+		:root::marker {
+			width:28dip; 
+			height:15dip;
+			background:threedlight;
+			border-radius:7dip;
+			margin:* * * 3dip;
+			foreground-image:url(stock:disk);
+			foreground-repeat:no-repeat;
+			foreground-position:1dip 50%;
+			foreground-size:13dip;
+			fill:window;
+			stroke:threedshadow;
+			stroke-width:1dip;
+		}
+		:root:checked::marker {
+			foreground-position:14dip 50%;
+			background:highlight;
+			transition:foreground-position(quint-in,120ms,quint-out,120ms) background-color(linear,120ms);
+		}
+
+		:root > option:first-child { visibility:visible; }
+		:root > option:last-child { visibility:hidden; }
+		:root:checked > option:first-child { visibility:hidden; }
+		:root:checked > option:last-child { visibility:visible; }
+		
+		} 
+
+		toggle
+		{
+			style-set: std-toggle;
+			click!:
+				$1(#container > #danmu)::visibility = $1(.danmuico):checked ? "visible" # "none";
+
+		}
+		label
+		{
+			color:#EEE;
+		}
+
+		</style>
+	</head>
+	<body>
+		<div id="container" class="bar">
+			<div id="danmu">
+			</div>
+			<div id="bottom">
+				<div class="vol-block">
+					<span class="vol-ico ico ico-check common-ico" type="checkbox" checked>
+						<i class="fa fa-volume-up ico-check-on"></i>
+						<i class="fa fa-volume-off ico-check-off"></i>
+					</span>
+					<INPUT .vol-hslider type="hslider" name="sound-fix" max="100" value="70"/>
+				</div>
+				<div id="reload" class="reload-block common-ico">
+					<i class="fa fa-undo ico"></i>
+				</div>
+				<div id="stop" class="stop-block common-ico">
+					<i class="fa fa-stop-circle ico"></i>
+				</div>
+				<label>侧边</label>
+				<toggle name="sidebar" class="sidebar common-ico" />
+				<label>弹幕</label>
+				<toggle name="danmuico" class="danmuico common-ico" />
+<!--
+				<div class="sidebar-block">
+				<label>侧边</label>
+				<span class="sidebar ico ico-check" type="checkbox" checked>
+					<i class="fa fa-toggle-on ico-check-on"></i>
+					<i class="fa fa-toggle-off ico-check-off"></i>
+				</span>
+				</div>
+				<div class="danmu-block">
+				<label>弹幕</label>
+				<span class="danmu ico ico-check" type="checkbox" checked>
+					<i class="fa fa-toggle-on ico-check-on"></i>
+					<i class="fa fa-toggle-off ico-check-off"></i>
+				</span>
+				</div>
+-->
+				<div class="setting-block common-ico" align-popup="right">
+					<i class="fa fa-cog ico"></i>
+					<menu class="popup common-menu setting-menu" align-popup="right">
+						<li class="audio-output-device">音频输出设备
+							<menu class="common-menu"></menu>
+						</li>
+						<li class="black-screen-patch">黑屏补丁
+							<menu class="common-menu">
+								<li name="black-screen-patch">补丁1</li>
+								<li name="black-screen-patch">补丁2</li>
+								<hr>
+								<li name="black-screen-patch" checked>注意：请重新打开软件后，再选择其中一个</li>
+							</menu>
+						</li>
+					</menu>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

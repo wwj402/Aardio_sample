@@ -1,0 +1,6 @@
+# Build
+**/Publish/
+**/dist/
+**/Debug/
+*.ini
+*.txt
