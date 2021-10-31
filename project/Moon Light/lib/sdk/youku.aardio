@@ -1,0 +1,33 @@
+﻿import web.json;    
+import inet.http;
+import crypt;
+import win.clip;
+
+namespace sdk;
+class youku{
+	ctor(url){
+		var http = ..inet.http();
+		http.disableCache();
+	};
+	getStreamInfo = function(){
+		var tt = tostring(..time.now().getMilliTime());
+        data = ..web.json.stringify({"liveId" = liveid; "app" = "Pc"});
+        url = "https://acs.youku.com/h5/mtop.youku.live.com.livefullinfo/1.0/?appKey=24679788";
+		..console.dump(..inet.getCookie(url) )
+	}
+}
+namespace youku{
+    info = {
+        name = "虎牙";
+        url = "http://www.huya.com/";
+    }
+    
+ 	canHandle = function(url){
+		return ..string.match( url, "<@www.huya.com/@>(\w+)" ); 
+	}      	
+}
+
+import console;
+console.open()
+console.dump(youku("https://www.huya.com/hyq18000").getStreamInfo());
+execute("pause")

@@ -1,0 +1,670 @@
+namespace qttranslator;
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="Qt5_translation";right=989;bottom=564)
+mainForm.add(
+button={cls="button";text="下载";left=415;top=25;right=485;bottom=50;ah=1;aw=1;tabstop=1;z=3};
+button2={cls="button";text="选择";left=415;top=55;right=485;bottom=80;ah=1;aw=1;tabstop=1;z=6};
+button3={cls="button";text="选择";left=415;top=85;right=485;bottom=110;ah=1;aw=1;tabstop=1;z=21};
+button4={cls="button";text="选择";left=415;top=115;right=485;bottom=140;ah=1;aw=1;tabstop=1;z=24};
+button5={cls="button";text="选择";left=415;top=145;right=485;bottom=170;ah=1;aw=1;tabstop=1;z=29};
+button6={cls="button";text="执行预置";left=905;top=25;right=975;bottom=50;ah=1;aw=1;tabstop=1;z=26};
+button7={cls="button";text="选择";left=905;top=115;right=975;bottom=140;ah=1;aw=1;tabstop=1;z=25};
+button8={cls="button";text="执行";left=905;top=145;right=975;bottom=170;ah=1;aw=1;tabstop=1;z=15};
+checkbox={cls="checkbox";text="lupdate";left=505;top=25;right=585;bottom=50;ah=1;aw=1;tabstop=1;z=16};
+checkbox2={cls="checkbox";text="lconvert";left=600;top=25;right=680;bottom=50;ah=1;aw=1;tabstop=1;z=17};
+checkbox3={cls="checkbox";text="lrelease";left=695;top=25;right=775;bottom=50;ah=1;aw=1;tabstop=1;z=18};
+combobox={cls="combobox";left=505;top=85;right=595;bottom=110;ah=1;aw=1;edge=1;items={"lupdate.exe";"lconvert.exe";"lrelease.exe"};mode="dropdownlist";tabstop=1;z=11};
+combobox2={cls="combobox";left=605;top=85;right=975;bottom=110;ah=1;aw=1;edge=1;items={};mode="dropdownlist";tabstop=1;z=12};
+edit={cls="edit";left=115;top=25;right=405;bottom=50;ah=1;aw=1;edge=1;tabstop=1;z=2};
+edit2={cls="edit";left=115;top=55;right=405;bottom=80;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=5};
+edit3={cls="edit";left=115;top=85;right=405;bottom=110;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=20};
+edit4={cls="edit";left=115;top=115;right=405;bottom=140;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=8};
+edit5={cls="edit";left=115;top=145;right=405;bottom=170;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=27};
+edit6={cls="edit";left=605;top=115;right=895;bottom=140;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=10};
+edit7={cls="edit";left=565;top=145;right=895;bottom=170;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=14};
+edit8={cls="edit";left=505;top=190;right=975;bottom=555;ah=1;aw=1;edge=1;hscroll=1;multiline=1;tabstop=1;vscroll=1;z=9};
+listview={cls="listview";left=15;top=190;right=485;bottom=555;ah=1;aw=1;edge=1;gridLines=1;tabstop=1;z=7};
+static={cls="static";text="模版下载基址";left=15;top=25;right=105;bottom=50;ah=1;aw=1;center=1;transparent=1;z=1};
+static2={cls="static";text="下载保存目录";left=15;top=55;right=105;bottom=80;ah=1;aw=1;center=1;transparent=1;z=4};
+static3={cls="static";text="源文件目录";left=15;top=85;right=105;bottom=110;ah=1;aw=1;center=1;transparent=1;z=19};
+static4={cls="static";text="语言工具目录";left=15;top=115;right=105;bottom=140;ah=1;aw=1;center=1;transparent=1;z=22};
+static5={cls="static";text="编译工具目录";left=15;top=145;right=105;bottom=170;ah=1;aw=1;center=1;notify=1;transparent=1;z=28};
+static6={cls="static";text="要插入的文件";left=505;top=115;right=595;bottom=140;ah=1;aw=1;center=1;transparent=1;z=23};
+static7={cls="static";text="命令行";left=505;top=145;right=555;bottom=170;ah=1;aw=1;center=1;transparent=1;z=13}
+)
+/*}}*/
+
+mainForm.enableDpiScaling(false);
+
+import io;
+import string;
+import fsys.path;
+import fsys.ini;
+import fsys.dlg;
+import process.popen;
+
+if(_STUDIO_INVOKED){
+	import console;
+	console.open();
+}
+var mpos_o; 
+var homedir = "\";
+var download_files = {
+		"qt"; "qtbase"; "qtdeclarative"; "qtquickcontrols";
+		"qtquickcontrols2"; "qtscript"; "qtmultimedia"; "qtxmlpatterns";
+		"qtconnectivity"; "qtlocation"; "assistant"; "designer"; "linguist"; "qt_help"
+	};
+var download_sufix = "_untranslated.ts";
+var qt_savedir = io.fullpath(io.joinpath(homedir, "download\"));
+var qt_sourcedir = "C:\Qt\5.15.2\Src\";
+var qt_tooldir = "C:\Qt\5.15.2\mingw81_64\bin\";
+var qt_makedir = "c:\Qt\Tools\mingw810_64\bin\";
+var qt_baseurl = "https://l10n-files.qt.io/l10n-files/qt-old515/";
+var translation_map = {
+    	assistant = "qttools\src\assistant\assistant.pro";
+    	qt_help = "qttools\src\assistant\help\help.pro";
+    	designer = "qttools\src\designer\designer.pro";
+		linguist = "qttools\src\linguist\linguist.pro";
+		qtbase = "qtbase\qtbase.pro";
+		qtconnectivity = "qtconnectivity\qtconnectivity.pro";
+		qtdeclarative = "qtdeclarative\qtdeclarative.pro";
+		qtlocation = "qtlocation\qtlocation.pro";
+		qtmultimedia = "qtmultimedia\qtmultimedia.pro";
+		qtquickcontrols = "qtquickcontrols\qtquickcontrols.pro";
+		qtquickcontrols2 = "qtquickcontrols2\qtquickcontrols2.pro";
+		qtscript = "qtscript\qtscript.pro";
+		qtxmlpatterns = "qtxmlpatterns\qtxmlpatterns.pro"
+	};
+var cmdline_par = {
+		lupdate = "%lupdate% -locations relative <project-file> -ts <ts-files>";
+		lconvert = "%lconvert% -target-language zh_CN -locations none -o <outfile> -i <infile>";
+		lrelease = "%lrelease% <ts-files> -qm <qm-file>"
+	};
+var ininame = io._exefile + ".ini";
+var readIniPar = function(...){
+	var inipath;
+	if(#...){
+		inipath = ...;
+		inipath = io.fullpath(inipath);
+	}
+	else {
+		inipath = io.joinpath(homedir, ininame);
+	}
+	var iniobj = fsys.ini(inipath);
+	var inisec = iniobj.getSection(fsys.getFileName(inipath));
+	mainForm.edit.text =  inisec["qt_baseurl"];
+	mainForm.edit2.text =  inisec["qt_savedir"];
+	mainForm.edit3.text =  inisec["qt_sourcedir"];
+	mainForm.edit4.text =  inisec["qt_tooldir"];
+	mainForm.edit5.text =  inisec["qt_makedir"];
+};
+var saveIniPar = function(...){
+	var inipath;
+	if(#...){
+		inipath = ...;
+		inipath = io.fullpath(inipath);
+	}
+	else {
+		inipath = io.joinpath(homedir, ininame);
+	}
+	var iniobj = fsys.ini(inipath);
+	var inisec = iniobj.getSection(fsys.getFileName(inipath));
+	if(!inisec["qt_baseurl"]){
+		inisec["qt_baseurl"] = qt_baseurl;
+	}
+	else {
+		inisec["qt_baseurl"] = mainForm.edit.text;
+	}
+	if(!inisec["qt_savedir"]){
+		inisec["qt_savedir"] = fsys.path.addBackslash(
+									fsys.path.canonicalize(qt_savedir));
+	}
+	else {
+		inisec["qt_savedir"] = mainForm.edit2.text;
+	}
+	if(!inisec["qt_sourcedir"]){
+		inisec["qt_sourcedir"] = fsys.path.addBackslash(
+									fsys.path.canonicalize(qt_sourcedir));
+	}
+	else {
+		inisec["qt_sourcedir"] = mainForm.edit3.text;
+	}
+	if(!inisec["qt_tooldir"]){
+		inisec["qt_tooldir"] = fsys.path.addBackslash(
+									fsys.path.canonicalize(qt_tooldir));
+	}
+	else {
+		inisec["qt_tooldir"] = mainForm.edit4.text;
+	}	
+	if(!inisec["qt_makedir"]){
+		inisec["qt_makedir"] = fsys.path.addBackslash(
+									fsys.path.canonicalize(qt_makedir));
+	}
+	else {
+		inisec["qt_makedir"] = mainForm.edit5.text;
+	}	
+	inisec.save();
+	inisec = iniobj.getSection("translation_map");
+	for(k,v in translation_map){
+		if(!inisec[k]){
+			inisec[k] = v;
+		}
+	
+	}
+	inisec.save();
+	inisec = iniobj.getSection("cmdline_par");
+	for(k,v in cmdline_par){
+		if(!inisec[k]){
+			inisec[k] = v;
+		}
+	
+	}
+	inisec.save();
+};
+if(!io.exist(io.joinpath(homedir, ininame))){
+	saveIniPar();
+	mainForm.edit.text =  qt_baseurl;
+	mainForm.edit2.text =  qt_savedir;
+	mainForm.edit3.text =  qt_sourcedir;
+	mainForm.edit4.text =  qt_tooldir;
+	mainForm.edit5.text =  qt_makedir;
+}
+else {
+	readIniPar();
+}
+qtpoutput = function(cmdline, edit_output){
+	var pcmdline = process.popen.cmd(cmdline);
+	if(edit_output){
+		for( all,out,err in pcmdline.each() ){
+			edit_output.print(all);
+		}
+	}
+	pcmdline.close();
+
+}
+lupdatecmd = function(cmdlinepar, qt_suffix = "", func_output, edit_output){
+    var batfile = io.joinpath(homedir, "lupdatecmd.bat");
+    if(io.exist(batfile)){
+		string.save(batfile, '@echo off\r\nsetlocal enabledelayedexpansion\r\n');
+    }
+    var iniobj, inisec;
+    if(io.joinpath(homedir, ininame)){
+    	iniobj = fsys.ini(io.joinpath(homedir, ininame));
+    	inisec = iniobj.getSection("cmdline_par");
+    }
+    var lupdate_par;
+    if(cmdlinepar){
+    	lupdate_par = cmdlinepar;
+    }
+    else {
+    	lupdate_par = inisec["lupdate"] : cmdline_par["lupdate"];
+    }
+    lupdate_par = string.replace(lupdate_par, "@%lupdate%", "");
+	var tool_lupdate = io.joinpath(mainForm.edit4.text, "lupdate.exe");
+	if(io.exist(tool_lupdate)){
+		for(k,v in translation_map){
+			var tool_par = lupdate_par;
+			tool_par = string.replace(tool_par, "@<project-file>",
+						'"' + io.joinpath(mainForm.edit3.text, v) + '"');
+			tool_par = string.replace(tool_par, "@<ts-files>",
+					'"' + io.joinpath(fsys.getParentDir(mainForm.edit2.text),
+					k + qt_suffix + ".ts") + '"');
+			string.save(batfile, '"' + tool_lupdate + '"' + tool_par + '\r\n', true);
+		}
+		if(!func_output){
+			return batfile;
+		}
+		if(edit_output){
+			qtpoutput(batfile, edit_output);
+		}
+		else {
+			qtpoutput(batfile);
+		}
+	}
+}
+lconvertcmd = function(cmdlinepar, qt_suffix = "", func_output, edit_output){
+    var batfile = io.joinpath(homedir, "lconvertcmd.bat");
+    if(io.exist(batfile)){
+		string.save(batfile, '@echo off\r\nsetlocal enabledelayedexpansion\r\n');
+    }
+    var iniobj, inisec;
+    if(io.joinpath(homedir, ininame)){
+    	iniobj = fsys.ini(io.joinpath(homedir, ininame));
+    	inisec = iniobj.getSection("cmdline_par");
+    }
+    var lconvert_par;
+    if(cmdlinepar){
+    	lconvert_par = cmdlinepar;
+    }
+    else {
+    	lconvert_par = inisec["lconvert"] : cmdline_par["lconvert"];
+    }
+    lconvert_par = string.replace(lconvert_par, "@%lconvert%", "");
+	var tool_lconvert = io.joinpath(mainForm.edit4.text, "lconvert.exe");
+	if(io.exist(tool_lconvert)){
+		for(k,v in translation_map){
+			var tool_par = lconvert_par;
+			tool_par = string.replace(tool_par, "@<outfile>",
+					'"' + io.joinpath(fsys.getParentDir(mainForm.edit2.text),
+					k + "_zh_CN.ts" + '"'));
+			tool_par = string.replace(tool_par, "@<infile>",
+					'"' + io.joinpath(fsys.getParentDir(mainForm.edit2.text),
+					k + qt_suffix + ".ts") + '"');
+			string.save(batfile, '"' + tool_lconvert + '"' + tool_par + '\r\n', true);
+		}
+		if(!func_output){
+			return batfile;
+		}
+		if(edit_output){
+			qtpoutput(batfile, edit_output);
+		}
+		else {
+			qtpoutput(batfile);
+		}
+	}
+}
+lreleasecmd = function(cmdlinepar, qt_suffix = "_zh_CN", func_output, edit_output){
+    var batfile = io.joinpath(homedir, "lreleasecmd.bat");
+    if(io.exist(batfile)){
+		string.save(batfile, '@echo off\r\nsetlocal enabledelayedexpansion\r\n');
+    }
+    var iniobj, inisec;
+    if(io.joinpath(homedir, ininame)){
+    	iniobj = fsys.ini(io.joinpath(homedir, ininame));
+    	inisec = iniobj.getSection("cmdline_par");
+    }
+    var lrelease_par;
+    if(cmdlinepar){
+    	lrelease_par = cmdlinepar;
+    }
+    else {
+    	lrelease_par = inisec["lrelease"] : cmdline_par["lrelease"];
+    }
+    lrelease_par = string.replace(lrelease_par, "@%lrelease%", "");
+	var tool_lrelease = io.joinpath(mainForm.edit4.text, "lrelease.exe");
+	if(io.exist(tool_lrelease)){
+		for(k,v in translation_map){
+			var tool_par = lrelease_par;
+			tool_par = string.replace(tool_par, "@<ts-files>",
+					'"' + io.joinpath(fsys.getParentDir(mainForm.edit2.text),
+					k + qt_suffix + ".ts") + '"')
+			tool_par = string.replace(tool_par, "@<qm-file>",
+					'"' + io.joinpath(fsys.getParentDir(mainForm.edit2.text),
+					k + qt_suffix + ".qm") + '"');
+			string.save(batfile, '"' + tool_lrelease + '"' + tool_par + '\r\n', true);
+		}
+		if(!func_output){
+			return batfile;
+		}
+		if(edit_output){
+			qtpoutput(batfile, edit_output);
+		}
+		else {
+			qtpoutput(batfile);
+		}
+	}
+}
+var setmakeenv = function(pathtoadd){
+	var pathtemp = win.getenv("PATH");
+	if(!string.indexOf(pathtemp, fsys.path.canonicalize(pathtoadd))){
+		win.setenv("PATH", 	pathtoadd + ";" + pathtemp);
+	}
+	return pathtemp;
+}
+//初始化listview控件
+mainForm.listview.insertColumn("文件名",90);
+mainForm.listview.insertColumn("网址",180);
+mainForm.listview.insertColumn("状态",60);
+mainForm.listview.insertColumn("大小",60);
+mainForm.listview.insertColumn("速度",60);
+mainForm.listview.insertColumn("已下载",60);
+mainForm.listview.adjust = function(cx,cy){
+	mainForm.listview.fillParent(1);
+}
+//创建下载线程管理器
+import thread.dlManager;
+var dlmgr = thread.dlManager(2/*最多允许五个线程同时下载*/);
+
+//响应下载事件
+dlmgr.onReceiveBegin = function(id,url,filename,statusText,httpStatusCode,totalSize,downSize){
+	mainForm.listview.setItemText( {filename;url;statusText;fsys.formatSize(totalSize);fsys.formatSize(downSize) },id )
+}
+dlmgr.onReceive = function(id,sizePs,downSize){
+	mainForm.listview.setItemText( fsys.formatSize(downSize),id,6);
+	mainForm.listview.setItemText( fsys.formatSize(sizePs) + "/s" ,id,5);
+}
+dlmgr.onEnd = function(id,savepath,resumePath,contentLength){ 
+	if( savepath ){ 
+		mainForm.listview.setItemText(  "已完成"  ,id,3);
+		mainForm.listview.setItemText( fsys.formatSize(contentLength),id,4);
+	}
+	else {
+		mainForm.listview.setItemText(  "已停止"  ,id,3);
+	}
+	mainForm.listview.setItemText(  "0KB/s"  ,id,5); 
+	//fsys.delete(resumePath)
+}
+dlmgr.onError = function(id,err){
+	mainForm.listview.setItemText( err,id,3);
+}
+
+mainForm.button.oncommand = function(id,event){
+	mainForm.button.disabled = true;
+	//添加下载任务非常简单,push下载参数就可以了
+	//注意这里为了简化示例,任务id使用了listview控件的行号,如果需要删除行则需要使用一个表保持id与行号的映射关系
+
+	if(#mainForm.edit2.text){
+		qt_savedir = mainForm.edit2.text;
+	}
+	else {
+		qt_savedir = fsys.path.addBackslash(qt_savedir);
+	}
+	
+
+	if(#mainForm.edit.text){
+		qt_baseurl = mainForm.edit.text;
+	}
+	for(k,v in download_files){
+		dlmgr.push( 
+			id = mainForm.listview.addItem( v + download_sufix );
+			url = qt_baseurl + v + download_sufix;
+			filename = v + download_sufix; //文件名可以省略
+			savedir = qt_savedir;
+		)
+	}
+}
+
+mainForm.button2.oncommand = function(id,event){
+	var sel_dir = mainForm.edit2.text;
+	if(!#sel_dir){
+		sel_dir = homedir;
+	}
+	sel_dir = fsys.dlg.opendir(sel_dir);
+	if(sel_dir){
+		if(fsys.getFileName(sel_dir) == "download"){
+			mainForm.edit2.text = fsys.path.addBackslash(sel_dir);
+		}
+		else {
+			mainForm.edit2.text = fsys.path.addBackslash(
+							io.joinpath(sel_dir, "download"));
+		}
+	}
+}
+mainForm.button3.oncommand = function(id,event){
+	var sel_dir = mainForm.edit3.text;
+	if(!#sel_dir){
+		sel_dir = homedir;
+	}
+	sel_dir = fsys.dlg.opendir(sel_dir);
+	if(sel_dir){
+		mainForm.edit3.text = fsys.path.addBackslash(sel_dir);
+	}
+}
+mainForm.button4.oncommand = function(id,event){
+	var sel_dir = mainForm.edit4.text;
+	if(!#sel_dir){
+		sel_dir = homedir;
+	}
+	sel_dir = fsys.dlg.opendir(sel_dir);
+	if(sel_dir){
+		mainForm.edit4.text = fsys.path.addBackslash(sel_dir);
+	}
+}
+mainForm.button5.oncommand = function(id,event){
+	var sel_dir = mainForm.edit5.text;
+	if(!#sel_dir){
+		sel_dir = homedir;
+	}
+	sel_dir = fsys.dlg.opendir(sel_dir);
+	if(sel_dir){
+		mainForm.edit5.text = fsys.path.addBackslash(sel_dir);
+	}
+}
+mainForm.button7.oncommand = function(id,event){
+	var path_parse = io.splitpath(mainForm.edit6.text);
+	var file_name = fsys.dlg.open("语言文件(*.ts;*.pro)|*.ts;*.pro|所有文件(*.*)|*.*",
+							,path_parse.dir, , ,path_parse.file);
+	if(file_name){
+		mainForm.edit6.selectAll();
+		mainForm.edit6.clear();
+		mainForm.edit6.appendText(file_name);
+	}
+}
+mainForm.button6.oncommand = function(id,event){
+    mainForm.button6.disabled = true;
+    setmakeenv(mainForm.edit5.text);
+	var frmChild = mainForm.loadForm("\dlg\precmd.aardio");
+	frmChild.show();
+
+}
+mainForm.button8.oncommand = function(id,event){
+    mainForm.button8.disabled = true;
+    setmakeenv(mainForm.edit5.text);
+	var frmChild = mainForm.loadForm("\dlg\manualcmd.aardio");
+	frmChild.show();	
+}
+//下载任务右键管理菜单
+import win.ui.menu;
+mainForm.listview.onnotify = function(id,code,ptr){  
+	if( code = 0xFFFFFFFB/*_NM_RCLICK*/ ){
+		var x,y = win.getMessagePos();  
+		var nmListView = mainForm.listview.getNotifyMessage(code,ptr);
+		if(nmListView.iItem){
+			console.dump(nmListView.iItem);
+			console.dump(mainForm.listview.getItemText(nmListView.iItem, 1));
+			
+			//创建弹出菜单
+			var popmenu = win.ui.popmenu(mainForm);
+			popmenu.add('重新下载',function(id){
+				dlmgr.push(
+					id = nmListView.iItem;
+					url = qt_baseurl + mainForm.listview.getItemText(nmListView.iItem, 1);
+					filename = mainForm.listview.getItemText(nmListView.iItem, 1); //文件名可以省略
+					savedir = qt_savedir;
+				)
+			}
+			)
+			popmenu.popup(x,y,true);
+			popmenu.close();
+		}
+	}
+}
+
+import thread.event;
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+	mainForm.text = "正在等待关闭";
+	saveIniPar();
+	dlmgr.quit();
+}
+
+mainForm.combobox.onOk = function(){
+	var cmdline = io.joinpath(mainForm.edit4.text, mainForm.combobox.selText);
+	var cmdpopen = process.popen.cmd(cmdline + " -help");
+	if(#mainForm.edit8.text){
+		mainForm.edit8.selectAll();
+		mainForm.edit8.clear();
+	}
+	for( all,out,err in cmdpopen.each() ){
+	    mainForm.edit8.print(all);
+	}
+	var cmdoutput = mainForm.edit8.text;
+	cmdpopen.close();
+	mainForm.combobox2.clear();
+	for m in string.gmatch(cmdoutput ,"!\n\s+([-@][^\r\n]+)") {
+		var msplit = string.split(m, "< >");
+		if(msplit[1] != "-help" and msplit[1] != "-h"){
+			mainForm.combobox2.add(m);
+		}
+	}
+	if(#mainForm.edit7.text > 0){
+		mainForm.edit7.selectAll();
+		mainForm.edit7.clear();
+	}
+	mainForm.edit7.appendText(io.joinpath(mainForm.edit4.text,
+										mainForm.combobox.selText));
+}
+
+mainForm.combobox2.onOk = function(){ 
+	if(#mainForm.edit7.text > 0){
+		var mpos = mainForm.edit7.getsel();
+		var mlen = mainForm.edit7.getLength();
+		mainForm.edit7.setsel(mpos, mpos);
+		var bchart = mainForm.edit7.selText;
+		mainForm.edit7.setsel(mpos + 1, mpos + 1);
+		var achart = mainForm.edit7.selText;
+		if(mpos >= mlen){
+			if(bchart = " "){
+				mainForm.edit7.appendText(mainForm.combobox2.selText);
+			}
+			else {
+				mainForm.edit7.appendText(" " + mainForm.combobox2.selText);
+			}
+		}
+		else {
+			mainForm.edit7.setsel(mpos + 1, mlen);
+			console.dump(bchart, achart, mainForm.edit7.selText);
+			if(bchart != " " and achart != " "){
+				mainForm.edit7.selText = " " + mainForm.combobox2.selText + " " +
+											mainForm.edit7.selText;
+			}
+			elseif(bchart = " "){
+				mainForm.edit7.selText = mainForm.combobox2.selText + " " +
+											mainForm.edit7.selText;
+			}
+			elseif(achart = " "){
+				mainForm.edit7.selText = " " + mainForm.combobox2.selText +
+											mainForm.edit7.selText;
+			}
+			else {
+				mainForm.edit7.selText = mainForm.combobox2.selText +
+											mainForm.edit7.selText;
+			}
+		}
+	}
+}
+
+mainForm.edit2.wndproc = {
+	[0x233/*_WM_DROPFILES*/] = function(hwnd,message,wParam,lParam){
+		var dtext = win.getDropFile(wParam)[1];
+		if(fsys.isDir(dtext)){
+			mainForm.edit2.text = fsys.path.addBackslash(io.joinpath(dtext, "download"));
+		}
+		else {
+			mainForm.edit2.text = fsys.path.addBackslash(fsys.path.canonicalize(
+								io.joinpath(fsys.getParentDir(dtext), "download")));
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+
+mainForm.edit3.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) { 
+		case 0x233/*_WM_DROPFILES*/ {
+			var dtext = win.getDropFile(wParam)[1];
+			if(fsys.isDir(dtext)){
+				mainForm.edit3.text = fsys.path.addBackslash(dtext);
+			}
+			else {
+				mainForm.edit3.text = fsys.path.addBackslash(fsys.path.canonicalize(
+										fsys.getParentDir(dtext)));
+			}
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+
+mainForm.edit4.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) { 
+		case 0x233/*_WM_DROPFILES*/ {
+			var dtext = win.getDropFile(wParam)[1];
+			if(fsys.isDir(dtext)){
+				mainForm.edit4.text = fsys.path.addBackslash(dtext);
+			}
+			else {
+				mainForm.edit4.text = fsys.path.addBackslash(fsys.path.canonicalize(
+										fsys.getParentDir(dtext)));
+			}
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+
+mainForm.edit6.wndproc = {
+	[0x233/*_WM_DROPFILES*/] = function(hwnd,message,wParam,lParam){
+		var dtext = win.getDropFile(wParam)[1];
+		mainForm.edit6.selectAll();
+		mainForm.edit6.clear()
+		if(fsys.isDir(dtext)){
+			win.msgbox("拖放的是一个目录。");
+			mainForm.edit6.appendText(dtext);
+		}
+		else {
+			mainForm.edit6.appendText(dtext);
+		}
+	};
+	[0x202/*_WM_LBUTTONUP*/] = function(hwnd,message,wParam,lParam){
+		mpos_o = mainForm.edit7.getsel();
+		var selb, sela = string.find(mainForm.edit7.text, "@" + mainForm.edit6.text);
+		mainForm.edit7.setsel(selb, sela);
+	}
+	//无返回值则继续调用默认回调函数
+}
+
+mainForm.edit6.onChange = function(){ 
+	if(mainForm.edit7.selText){
+		var mpos = mainForm.edit7.getsel();
+		mainForm.edit7.selText = mainForm.edit6.text;
+		mainForm.edit7.setsel(mpos, mpos + #mainForm.edit6.text);
+	}
+	else {
+		var mpos = mainForm.edit7.getsel();
+		var mlen = mainForm.edit7.getLength();
+		if(mpos_o > mpos){
+			mpos = mpos_o;
+		}
+		mainForm.edit7.setsel(mpos, mpos);
+		var bchart = mainForm.edit7.selText;
+		mainForm.edit7.setsel(mpos + 1, mpos + 1);
+		var achart = mainForm.edit7.selText;
+		if(mpos >= mlen){
+			if(bchart = " "){
+				mainForm.edit7.appendText(mainForm.edit6.text);
+				mainForm.edit7.setsel(mpos + 1, mpos + 1 + #mainForm.edit6.text);
+			}
+			else {
+				mainForm.edit7.appendText(" " + mainForm.edit6.text);
+				mainForm.edit7.setsel(mpos + 2, mpos + 2 + #mainForm.edit6.text);
+			}
+		}
+		else {
+			mainForm.edit7.setsel(mpos + 1, mlen);
+			if(bchart != " " and achart != " "){
+				mainForm.edit7.selText = " " + mainForm.edit6.text + " " +
+											mainForm.edit7.selText;
+				mainForm.edit7.setsel(mpos + 2, mpos + 2 + #mainForm.edit6.text);
+			}
+			elseif(bchart = " "){
+				mainForm.edit7.selText = mainForm.edit6.text + " " +
+											mainForm.edit7.selText;
+				mainForm.edit7.setsel(mpos + 1, mpos + 1 + #mainForm.edit6.text);
+			}
+			elseif(achart = " "){
+				mainForm.edit7.selText = " " + mainForm.edit6.text +
+											mainForm.edit7.selText;
+				mainForm.edit7.setsel(mpos + 2, mpos + #mainForm.edit6.text);
+			}
+			else {
+				mainForm.edit7.selText = mainForm.edit6.text +
+											mainForm.edit7.selText;
+			mainForm.edit7.setsel(mpos + 1, mpos + 2 + #mainForm.edit6.text);
+			}
+		}
+	}
+}
+
+
+//mainForm.enableDpiScaling();
+
+mainForm.show();
+return win.loopMessage();

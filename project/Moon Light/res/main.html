@@ -1,28 +1,26 @@
-﻿<html>
+﻿<html lang=zh>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
 		<link rel="stylesheet" href="style/common.css">
-
-    <script type="text/tiscript">
+<!--
+	<script type="text/tiscript">
 /*
 		if( view.connectToInspector ) // the view is in debug mode
 			view.connectToInspector(rootElement, "127.0.0.1");
 */
 		include $url(sciter\ddm2.tis);
-		include $url(sciter\decorators.tis);
 		function self.ready() {
 		DragDrop2
 		{
-			what      : "#container.main .right-side .container .room-list .item",
-			where     : "#container.main .right-side .container .room-list",
-			container : "#container.main .right-side .container .room-list"
+			what     : "#container.main .right-side .container .room-list .item",
+			where    : "#container.main .right-side .container .room-list",
+			container    : "#container.main .right-side .container .room-list",
 			//notBefore : "tbody>tr.fixed",
 			//autoScroll: false
 			};
 		}
-
 	</script>
-
+-->
 	<style>
 		@font-face {
 			font-family: 'FontAwesome';
@@ -101,8 +99,16 @@
 			overflow-y:auto;
 			height:*;
 			width:*;
-			accept-drop: selector(#container.main .right-side .container .room-list .item);
-			drop: insert;
+			//accept-drop: selector(#container.main .right-side .container .room-list .item);
+			//drop: insert;
+		}
+		#container.main .right-side .container .room-list:drop-target
+		{
+			background-color: lightyellow;
+		}
+		#container.main .right-side .container .room-list:drag-over
+		{
+			border-color:red;
 		}
 		#container.main .right-side .container .danmu
 		{
@@ -152,6 +158,8 @@
 			background-color: #CC7E86;
 			height: 40dip;
 			flow: horizontal;
+			vertical-align: middle;
+			display: inline-block;
 		}
 		#container.main .right-side .container .room-list .item
 		{
@@ -164,7 +172,7 @@
 			cursor: pointer;
 			flow:horizontal;
 			context-menu:selector(menu#room-command);
-			draggable: only-move;
+			//draggable: only-move;
 			position: relative;
 		}
 		#container.main .right-side .container .room-list .item:moving
@@ -273,6 +281,10 @@
 			width: 20dip;
 			vertical-align: middle;
 		}
+		#container.main .right-side .container .command-list .rate-opt
+		{
+			vertical-align: middle;
+		}
 		#container.main .right-side .container .command-list .common-ico i
 		{
 			margin: auto;
@@ -284,16 +296,35 @@
 		menu.context > li[command="open-url"].room-list-item-right-menu {
 			behavior: menu-item;
 		}
-		menu.context > li[command="open-url"].room-list-item-right-menu {
-			assigned!: self:value = "在浏览器中打开";
+		menu.context li[name="edit:undo"] label:lang(zh) { content: "撤销"; }
+		menu.context li[name="edit:redo"] label:lang(zh) { content: "重做"; }
+		menu.context li[name="edit:cut"] label:lang(zh) { content: "剪切"; }
+		menu.context li[name="edit:copy"] label:lang(zh) { content: "复制"; }
+		menu.context li[name="edit:paste"] label:lang(zh) { content: "粘贴"; }
+		menu.context li[name="edit:selectall"] label:lang(zh) { content: "全选"; }
+
+		menu.context > li[command="open-url"].room-list-item-right-menu:lang(zh) {
+			content: "在浏览器中打开";
 		}
-		menu.context>li[command="copy-url"].room-list-item-right-menu {
-			assigned!: self:value = "复制直播间地址";
+		menu.context > li[command="play-with"].room-list-item-right-menu:lang(zh) {
+			content: "使用播放器播放";
 		}
-		menu.context>li[command="delete-room"].room-list-item-right-menu {
-			assigned!: self:value = "删除此直播间";
+		menu.context>li[command="copy-url"].room-list-item-right-menu:lang(zh) {
+			content: "复制直播间地址";
 		}
-.tabs 
+		menu.context>li[command="copy-playurl"].room-list-item-right-menu:lang(zh) {
+			content: "复制播放地址";
+		}
+		menu.context>li[command="delete-room"].room-list-item-right-menu:lang(zh) {
+			content: "删除此直播间";
+		}
+		div.right-side>div.container>div#righttabs>div.strip>div[panel="panel-room"]:lang(zh) {
+			content: "房间列表";
+		}
+		div.right-side>div.container>div#righttabs>div.strip>div[panel="panel-danmu"]:lang(zh) {
+			content: "房间弹幕";
+		}
+.tabs
 {
   font:system;
   behavior:tabs;
@@ -388,8 +419,8 @@
 				<div class="container">
 					<div class="tabs" id="righttabs">
 						<div class="strip" role="page-tab-list">
-							<div panel="panel-room" selected role="page-tab">房间列表</div>
-							<div panel="panel-danmu" role="page-tab">房间弹幕</div>
+							<div panel="panel-room" selected role="page-tab">Live list</div>
+							<div panel="panel-danmu" role="page-tab">Live danmuku</div>
 						</div>
 					
 						<div name="panel-room">
@@ -398,6 +429,9 @@
 								</div>
 								<div class="command-list">
 									<div class="common-ico" id="show-add-room-form"><i class="fa fa-plus"></i></div>
+									<div class="rate-opt">
+										<button type="checkbox" id="rate-chq">2000kbps</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -417,10 +451,13 @@
 		</frameset>
 		</div>
 		<menu class="context common-menu" id="room-command">
-			<li command="open-url" class="room-list-item-right-menu">在浏览器中打开</li>
-			<li command="copy-url" class="room-list-item-right-menu">复制直播间地址</li>
+			<li command="open-url" class="room-list-item-right-menu">Open in browser</li>
+			<li command="play-with" class="room-list-item-right-menu">Play with player</li>
 			<hr>
-			<li command="delete-room" class="room-list-item-right-menu">删除此直播间</li>
+			<li command="copy-url" class="room-list-item-right-menu">Copy live address</li>
+			<li command="copy-playurl" class="room-list-item-right-menu">Copy stream address</li>
+			<hr>
+			<li command="delete-room" class="room-list-item-right-menu">Delete this live</li>
 		</menu>
 	</body>
 </html>

@@ -8,7 +8,7 @@ class moonLight{
 				var plugn = sdk[args.website]
 				if( !plugn ) return ;
 				
-				var roomInfo = plugn( args.roomUrl ).getStreamInfo()  
+				var roomInfo = plugn( args.roomUrl ).getRoomInfo()  
 				if( roomInfo ){
 					thread.command.post( "onUpdateRoomInfo", roomInfo)
 				}

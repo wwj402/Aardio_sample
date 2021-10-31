@@ -3,7 +3,7 @@ import win.ui;
 mainForm = win.form(text="aardio form";right=584;bottom=421)
 mainForm.add(
 button={cls="button";text="Explorer";left=504;top=21;right=566;bottom=43;ah=1;aw=1;z=3};
-button2={cls="button";text="Update";left=504;top=389;right=566;bottom=411;ah=1;aw=1;z=17};
+button2={cls="button";text="Update";left=504;top=390;right=566;bottom=411;ah=1;aw=1;z=17};
 button3={cls="button";text="Check";left=416;top=389;right=478;bottom=411;ah=1;aw=1;z=18};
 button4={cls="button";text="Explorer";left=504;top=66;right=566;bottom=88;ah=1;aw=1;z=21};
 edit={cls="edit";left=108;top=21;right=497;bottom=43;acceptfiles=1;ah=1;aw=1;edge=1;tabstop=1;z=2};
@@ -29,9 +29,8 @@ static8={cls="static";text="Unpack dir";left=18;top=66;right=93;bottom=88;ah=1;a
 import fsys;
 import fsys.dlg;
 import win.reg;
-import io;
+import console;
 
-io.open();
 //初始化7zip执行文件
 var sevenzip_table = {
 					root = "HKEY_CURRENT_USER";
@@ -51,7 +50,7 @@ mainForm.edit7.text = sevenzip_table.unpack_par;
 
 //初始化edit下载地址
 var psl_url = {
-				AccessKey = "http://jp.wanfutrade.com/download/PslAccessKey_Modified_wanfu.rar";
+				AccessKey = "http://jp.wanfutrade.com/download/PslAccessKey.rar";
 				CovertINIFile = "http://jp.wanfutrade.com/download/CovertINIFile.rar";
 				gb2big5 = "http://jp.wanfutrade.com/download/PSLGbk2Big5_Modified_wanfu.rar";
 				PSLHardCodedString = "http://jp.wanfutrade.com/download/PSLHardCodedString.rar";
@@ -78,7 +77,8 @@ mainForm.listview.adjust = function(cx,cy){
 
 //创建下载线程管理器
 import thread.dlManager;
-var dlmgr = thread.dlManager(5, 1000/*最多允许五个线程同时下载*/);
+var tasknum, taskcount; 
+var dlmgr = thread.dlManager(1, 1000/*最多允许五个线程同时下载*/);
 
 //响应下载事件
 dlmgr.onReceiveBegin = function(
@@ -126,53 +126,68 @@ dlmgr.onEnd = function(id,savepath,resumePath,contentLength){
         	mainForm.edit.text, savepath,
         	mainForm.edit7.text, mainForm.edit8.text
         )
+        
     }
     else {
         mainForm.listview.setItemText(  "已停止"  ,id,3)
     }
-   	//mainForm.button3.disabled = false;
     mainForm.listview.setItemText(  "0KB/s"  ,id,5)
     //fsys.delete(resumePath)
+    taskcount += 1;
+    if(taskcount >= tasknum){
+		mainForm.button3.disabled = false;
+    }
+	else {
+		mainForm.button3.disabled = true;
+	}
+
 }
 dlmgr.onError = function(id,err){
     mainForm.listview.setItemText( err,id,3);
-  	//mainForm.button3.disabled = false;
+    taskcount += 1;
+    if(taskcount >= tasknum){
+		mainForm.button3.disabled = false;
+    }
+	else {
+		mainForm.button3.disabled = true;
+	}
 
 }
 
 mainForm.button2.oncommand = function(id,event){
-
+    mainForm.button2.disabled = true;
+    mainForm.button3.disabled = true;
 	if(mainForm.listview.count){
+		taskcount = 0;
+		for(k,v in mainForm.listview.checked){
+			taskcount += 1;
+		}
+		tasknum = taskcount;
+		taskcount = 0;
 		for(k,v in mainForm.listview.checked){
 			dlmgr.push(
 			id =  v;
 			url = mainForm.listview.getItemText(v, 1);
 			filename=""; //文件名可以省略
  	        savedir = "/download/";
- 	        ) 
+ 	        )
 		}
-	} else {
-	
+	}
+	else {
+		taskcount = 0;
+		tasknum = 5;
 	//添加下载任务非常简单,push下载参数就可以了
    	//注意这里为了简化示例,任务id使用了listview控件的行号,如果需要删除行则需要使用一个表保持id与行号的映射关系
- 	  for(name,ctrl in mainForm.eachControl("edit") ){
- 	      if(string.match(name, "edit[2-6]")){
- 	          dlmgr.push(
- 	          id =  mainForm.listview.addItem( win.getText(ctrl.hwnd) );
- 	          url = win.getText(ctrl.hwnd);
- 	          filename=""; //文件名可以省略
- 	          savedir = "/download/"; 
- 	          )
- 	     }
- 	  }
-   }
-    mainForm.button2.disabled = true;
-    mainForm.button3.disabled = true;
-    dlmgr.works.wait()
-	if(dlmgr.works.finished()){
-		mainForm.button3.disabled = false;
-	} else {
-		mainForm.button3.disabled = true;
+		for(name,ctrl in mainForm.eachControl("edit") ){
+			if(string.match(name, "edit[2-6]")){
+ 	          	dlmgr.push(
+ 	          	id =  mainForm.listview.addItem( win.getText(ctrl.hwnd) );
+ 	          	url = win.getText(ctrl.hwnd);
+ 	          	filename=""; //文件名可以省略
+ 	          	savedir = "/download/"; 
+ 	          	)
+ 	     	}
+		}
 	}
 
 }
@@ -259,12 +274,18 @@ mainForm.onClose = function(hwnd,message,wParam,lParam){
 
 //浏览7zip执行文件
 mainForm.button.oncommand = function(id,event){
-	mainForm.edit.text = fsys.dlg.open("执行文件|*.exe|所有文件|*.*");
+    var gtext = fsys.dlg.open("执行文件|*.exe|所有文件|*.*");
+    if(gtext){
+    	mainForm.edit.text = gtext;
+    }
 }
 
 //浏览解压目录
 mainForm.button4.oncommand = function(id,event){
-	mainForm.edit8.text = fsys.dlg.opendir("/download/");
+    var gtext = fsys.dlg.opendir("/download/");
+    if(gtext){
+ 	mainForm.edit8.text = gtext;
+    }  
 }
 
 mainForm.show();

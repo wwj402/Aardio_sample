@@ -86,14 +86,22 @@ wb.onButtonClick = function (scTarget,scOwner,reason,behaviorParams) {
 		} else {
 			..thread.set("sidebarchecked", false);
 		}
+		if(!scTarget.parent().$1(".danmuico").state["checked"]){
+			scTarget.parent().parent().$1("#danmu").style["visibility"] = "none";
+		}
 		..thread.command.sidebarCtrl();
 	}
 	if(scTarget.name == "danmuico"){
-		if(!scTarget.state[checked]){
+		if(scTarget.state.checked){
 			scTarget.parent().$1(".sidebar").state["checked"] = false;
+			scTarget.parent().parent().$1("#danmu").style["visibility"] = "visible";
 			..thread.set("sidebarchecked", false);
 			..thread.command.sidebarCtrl();
 		}
+		else {
+			scTarget.parent().parent().$1("#danmu").style["visibility"] = "none";
+		}
+		
 		webDanmuinit();
 	}
 }
@@ -137,9 +145,10 @@ var addDanmu = function(sdk, interhtml, ...){
 					divadd.innerHTML = interhtml;
 					divadd.update(true);
 					var divw = divadd.eval("this.box(#width, #margin)");
+					var ddt = divadd.eval("this.style.variable('ddt')");
 					//var speednode = ..math.sqrt((danmuw + divw) / danmuw) *
-										//danmuw / 8000 + 0.2;
-					var speednode = (danmuw + divw) / 8000;
+										//danmuw / ddt + 0.2;
+					var speednode = (danmuw + divw) / ddt;
 					var dtnode = (danmuw + divw) / speednode;
 					
 					if(speednode <= lastsn){
@@ -165,22 +174,22 @@ var addDanmu = function(sdk, interhtml, ...){
 			var divadd = danmulist.child(ch).createElement("div", interhtml);
 			divadd.eval(..string.format(
 						"this.style.variable('liw', px(%i))", danmuw));
-			divadd.update(true);
 			var divw = divadd.eval("this.box(#width, #margin)");
 			var timenode = time().getMilliTime();
+			var ddt = divadd.eval("this.style.variable('ddt')");
 			//var speednode = ..math.sqrt((danmuw + divw) / danmuw) *
-								//danmuw / 8000 + 0.2;
-			var speednode = (danmuw + divw) / 8000;
+								//danmuw / ddt + 0.2;
+			var speednode = (danmuw + divw) / ddt;
 			var dtnode = (danmuw + divw) / speednode;
 			divadd.timenode = tostring(timenode);
 			divadd.speednode = tostring(speednode);
-			divadd.dtnode = tostring(8000);
-			divadd.move = "set";
+			divadd.dtnode = tostring(ddt);
 			//divadd.eval(..string.format(
-						//"this.style.variable('ddt', %fms)", dtnode));
+						//"this.style.variable('ddt', %f)", dtnode));
 			divadd.eval(..string.format(
 						"this.style.variable('divw', px(0 - %i))", divw));
-
+			divadd.move = "set";
+			divadd.update(true);
 			dflag = false;
 		}
 	}
@@ -201,35 +210,37 @@ var listener = thread.command();
 listener.pushdanmu = function(sdk, s, txt, ...){
 	var danmutime = tostring(time(time(), "%H:%M:%S"));
 	var interhtml;
-		select(s.type) {
-			case "chatmsg" {
-				var htmls = /*%s %s[lv%s]：%s*/; 
-				interhtml = string.format(htmls, danmutime, s.nn, s.level, s.txt);
-				addDanmu(sdk, interhtml, ...);
-			}
-			case "uenter" {
-				var htmls = /*%s %s[lv%s]：进入 %s 直播间*/; 
-				interhtml = string.format(htmls, danmutime, s.nn, s.level, s.rid);
-				//addDanmu(sdk, interhtml, ...);
-			}
-			case "ssd" {
-				var htmls = /*%s <span id="nn"><a href="%s">%s</a></span>*/; 
-				interhtml = string.format(htmls, danmutime, s.url, s.content);
-				//addDanmu(sdk, interhtml, ...);
-			}
-			else {
-			}
+	select(s.type) {
+		case "chatmsg" {
+			var htmls = /*%s %s[lv%s]：%s*/; 
+			interhtml = string.format(htmls, danmutime, s.nn, s.level, s.txt);
+			addDanmu(sdk, interhtml, ...);
 		}
+		case "uenter" {
+			var htmls = /*%s %s[lv%s]：进入 %s 直播间*/; 
+			interhtml = string.format(htmls, danmutime, s.nn, s.level, s.rid);
+			//addDanmu(sdk, interhtml, ...);
+		}
+		case "ssd" {
+			var htmls = /*%s <span id="nn"><a href="%s">%s</a></span>*/; 
+			interhtml = string.format(htmls, danmutime, s.url, s.content);
+			//addDanmu(sdk, interhtml, ...);
+		}
+		else {
+		}
+	}
 
 }
 
 wb.wait();
+/*
 if(_STUDIO_INVOKED){
 	wb.doScript(`
 		if( view.connectToInspector ) // the view is in debug mode
 			view.connectToInspector();
 	`)	
 }
+*/
 
 winform.enableDpiScaling();
 winform.show(false);

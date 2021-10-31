@@ -1,5 +1,7 @@
 ﻿import inet.http;
+import inet.url;
 import web.json;
+import win.clip;
 
 namespace sdk;
 class yy{
@@ -8,39 +10,70 @@ class yy{
 		http.disableCache();
 	};
 	getRoomInfo = function(){
-		var roomId = ..string.match( url, "<@www.yy.com/@>(\d+?)/\1.*");
-		roomId := ..string.match( url, "<@www.yy.com/@>(\d+)");
-		if !roomId
-			return null, "房间号填写有误";
-		var yyapi = "http://www.yy.com/api/liveInfoDetail/%s/%s/0";
-		var header = {
-			['referer'] = 'http://wap.yy.com/mobileweb/%s';
-			['user-agent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36';
-		};
-		header['referer'] = ..string.format(header['referer'], roomId);
-		var html = http.get(..string.format(yyapi, roomId, roomId));
-   		if( !html )
-        	return null, "网络连接有误"; 
-	
-    	var r = ..web.json.parse( html );
-    	if( r.resultCode !== 0 )
-        	return null, "数据解析有误"; 
-    	if( !r.data ){
-    		html = http.get(url);
-    		if( !html )
+		var r = {};
+		var ret;
+		try{
+			var roomId = ..string.match( url, "<@www.yy.com/@>(\d+?)/\1.*");
+			if(!roomId){
+				roomId := ..string.match( url, "<@www.yy.com/@>(\d+)");
+				if(!roomId){
+					return null, "房间号填写有误";
+				}
+				else {
+    				var html = http.get(url);
+    				if(!html){
+        				return null, "网络连接有误";
+        			}
+        			//..win.clip.write(html);
+    				roomId = ..string.match(html, 'sid\\s*\\:\\s*"(\\d+)"');
+				}
+			}
+			var yyapi = "http://www.yy.com/api/liveInfoDetail/%s/%s/0";
+			var header = {
+				['referer'] = 'http://wap.yy.com/mobileweb/%s';
+				['user-agent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36';
+			};
+			header['referer'] = ..string.format(header['referer'], roomId);
+			var html = http.get(..string.format(yyapi, roomId, roomId));
+   			if(!html){
         		return null, "网络连接有误";
-    		r.data = ..string.match(html, "pageInfo\s*=\s*(%\{\}\;)");
-    		if(!r.data){
-    			return null, "数据解析有误";
-    		}
-    		r.data = ..string.replace(r.data, "!\w\w*%\(\)", '""');
-    		r.data = ..string.replace(r.data, "!\S%//.*?\,?=", '""');
-    		r.data = ..web.json.parse( r.data );
-
-			return r.data;
+        	}
+    		if(..web.json.parse( html ).data){
+        		r.data = ..web.json.parse( html ).data;
+        	}
+			else {
+    			var html = http.get(url);
+    			if(!html){
+        			return null, "网络连接有误";
+        		}
+        		//..win.clip.write(html);
+    			r.data = ..string.match(html, "pageInfo\s*=\s*(%\{\}\;)");
+    			if(!r.data){
+    				return null, "数据解析有误";
+    			}
+    			//r.data = ..string.replace(r.data, "!\w\w*%\(\)", '""');
+    			r.data = ..string.replace(r.data, "!\S%//.*?\,?=", '""');
+    			r.data = ..string.replace(r.data, "decodeURIComponent\(([^()]*)\)", "\1");
+    			r.data = ..web.json.parse( r.data );
+    			r.data.roomName = ..inet.url.decode(r.data.roomName);
+			}
+	
+    		ret = {
+        		website = "yy";
+        		roomUrl = url;
+        		roomId = roomId;
+        		ownerName = r.data.name ? r.data.name : r.data.nick;
+        		roomName = r.data.desc ? r.data.desc : r.data.roomName;
+        		avatarUrl = r.data.avatar ? r.data.avatar : r.data.logo;
+        		isLive = r.data.desc && r.data.desc != "" ? true : false;
+        		sid = r.data.sid;
+        	}; 
 		}
-    	//return r.data.room_id;
-    	return r.data;
+		catch(e){
+			return null, e;
+		}
+		return ret;
+
 	}
 	
 	getStreamInfo = function(){
@@ -50,30 +83,35 @@ class yy{
 		}
 		var roomId = data.sid;
 		this.roomId = roomId;
-		var room_url = "http://interface.yy.com/hls/new/get/%s/%s/1200?source=wapyy&callback=jsonp3";
-		var header = {
-			['referer'] = 'https://wap.yy.com/mobileweb/%s';
-			['user-agent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36';
-		};
-		header['referer'] = ..string.format(header['referer'], roomId);
-		var html = http.get(..string.format(room_url, roomId, roomId), header);
-		if( !html ){
-			return null, "网络连接有误，无直播地址"; 
+		try{
+			//var room_url = "http://interface.yy.com/hls/new/get/%s/%s/1200?source=wapyy&callback=jsonp3";
+			var room_url = "http://interface.yy.com/hls/new/get/%s/%s/1200?source=wapyy&callback=";
+			var header = {
+				['referer'] = 'https://wap.yy.com/mobileweb/%s';
+				['user-agent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36';
+			};
+			header['referer'] = ..string.format(header['referer'], roomId);
+			var html = http.get(..string.format(room_url, roomId, roomId), header);
+			if( !html ){
+				return null, "网络连接有误，无直播地址"; 
+			}
+			var r = ..web.json.parse( html );
+			if( !r.hls ){
+				return null, "直播地址数据解析有误";
+			}
+			var xa = r.audio;
+			var xv = r.video;
+			xv = ..string.replace(xv, "0_\d+_0", "0_0_0");
+			room_url = "https://interface.yy.com/hls/get/stream/15013/%s/15013/%s?source=h5player&type=m3u8";
+			html = http.get(..string.format(room_url, xv, xa));
+			r = ..web.json.parse( html );
+			data.streamUrl = r.hls;
 		}
-		var r = ..web.json.parse( html );
-		if( !r ){
-			return null, "直播地址数据解析有误";
+		catch(e){
+			return null, e;
 		}
-		return {
-        		website = "yy";
-        		roomUrl = "https://www.yy.com/" ++  roomId ++ "/" ++ roomId;
-        		roomId = this.roomId;
-        		ownerName = data.name ? data.name : data.nick;
-        		roomName = data.desc;
-        		avatarUrl = data.avatar ? data.avatar : data.logo;
-        		isLive = data.desc && data.desc != "" ? true : false;
-            	streamUrl = r.hls;
-        		}; 
+		return data;
+
 	}
 	
 }
@@ -90,7 +128,8 @@ namespace yy{
 }
 
 /*
-..io.open()
-..io.print(yy("https://www.yy.com/668").getStreamInfo())
+import console;
+console.open()
+console.dump(yy("https://www.yy.com/84568879/84568879").getStreamInfo())
 execute("pause")
 */

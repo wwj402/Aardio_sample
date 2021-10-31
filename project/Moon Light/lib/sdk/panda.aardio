@@ -58,6 +58,9 @@ class panda{
 			streamUrl = streamUrl;
 		} 
 	}
+	getRoomInfo = function(){
+		return this.getStreamInfo();
+	}
 }
 namespace panda{
     info = {

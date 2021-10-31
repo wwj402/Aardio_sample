@@ -102,10 +102,10 @@ var inimappars = {
 			sys_files = "sys_files";
 			sys_dirs = "sys_dirs";
 };
-var ini_pars; 
-var pattern = "<@%s@>"; 
-var homedir = "\"; 
-var exepath = ""; 
+var ini_pars;
+var pattern = "<@%s@>";
+var homedir = "\";
+var exepath = "";
 var default_pars = {
 			core_dir = "core";
 			root_dir = "isoroot";
@@ -140,17 +140,17 @@ var default_pars = {
 };
 
 var readIniPar = function(...){
-	var inipath; 
+	var inipath;
 	if(...){
 		inipath = ...;
-		inipath = io.fullpath(inipath);	
+		inipath = io.fullpath(inipath);
 	}
 	else {
 		inipath = io.joinpath(homedir, ininame);
 	}
 	if(io.exist(inipath)){
 		var iniobj = fsys.ini(inipath);
-		
+
 		var inisec = iniobj.getSection(fsys.getFileName(inipath));
 /*
 		for(k,v in inimappars){
@@ -166,14 +166,14 @@ var readIniPar = function(...){
 			return inisec;
 		}
 	}
-	return default_pars; 
+	return default_pars;
 }
 
 var saveIniPar = function(...){
-	var inipath; 
+	var inipath;
 	if(...){
 		inipath = ...;
-		inipath = io.fullpath(inipath);	
+		inipath = io.fullpath(inipath);
 	}
 	else {
 		inipath = io.joinpath(homedir, ininame);
@@ -239,11 +239,11 @@ var createOrder = function(...){
 							}
 						}
 						if(!sflag){
-							fileid.write(string.fromto(rpath, 65001, 0));	
+							fileid.write(string.fromto(rpath, 65001, 0));
 						}
 					}
 				}
-			} 
+			}
 			, false/*如果此参数为false则忽略子目录*/
 		);
 	}
@@ -259,14 +259,14 @@ var createOrder = function(...){
 				function(dir,filename,fullpath,findData){
 					var rpath = fsys.path.relative(fullpath,
 							mainForm.edit2.text, false) + '\r\n';
-					if(filename){ 
+					if(filename){
 /*
 						string.save(mainForm.edit5.text,
 							string.fromto(rpath, 65001, 0), true);
 */
 						fileid.write(string.fromto(rpath, 65001, 0));
 					}
-				} 
+				}
 				,/*如果此参数为false则忽略子目录*/
 			);
 		}
@@ -301,7 +301,7 @@ var setFsysPar = function(...){
 		mainForm.checkbox15.disabled = false;
 		mainForm.combobox.disabled = false;
 	}
-	var pars = ""; 
+	var pars = "";
 	for(name,ctrl in mainForm.eachControl("checkbox", "") ){
 		if(!ctrl.disabled){
 			if(ctrl.checked){
@@ -324,7 +324,7 @@ var setFsysPar = function(...){
 							}
 							else {
 								pars += par;
-							}	
+							}
 						}
 					}
 				}
@@ -381,7 +381,7 @@ var setBootPar = function(...){
 										default_pars.sboot_par,
 											mainForm.edit3.text + " -e -p0");
 					}
-					
+
 				}
 				case "efi" {
 					if(mainForm.checkbox17.checked){
@@ -393,7 +393,7 @@ var setBootPar = function(...){
 						mainForm.edit11.text = string.format(
 										default_pars.sboot_par,
 											mainForm.edit4.text + " -e -pEF");
-					}	
+					}
 				}
 				else {
 				}
@@ -409,7 +409,7 @@ var setBootPar = function(...){
 			else {
 				mainForm.edit11.text = string.format(default_pars.mboot_par,
 								mainForm.edit3.text, mainForm.edit4.text);
-			}	
+			}
 		}
 		else {
 			mainForm.edit11.text = "";
@@ -426,7 +426,7 @@ var setExePath = function(...){
 	else {
 		userdir = mainForm.edit.text;
 	}
-	
+
 	if(process().isWow64() and !mainForm.checkbox16.checked){
 		exepath = io.joinpath(userdir, "oscdimgx64.exe");
 	}
@@ -437,9 +437,9 @@ var setExePath = function(...){
 		win.msgboxErr(exepath + "不存在。");
 	}
 	else {
-		return exepath; 
+		return exepath;
 	}
-	
+
 }
 
 var setCmdPar = function(...){
@@ -453,7 +453,7 @@ var setCmdPar = function(...){
 		mainForm.edit12.text = string.format(default_pars.cmd_par,
 			exepath, mainForm.edit8.text, mainForm.edit9.text, mainForm.edit10.text,
 			mainForm.edit11.text, mainForm.edit2.text, mainForm.edit7.text);
-	}	
+	}
 }
 
 var initPars = function(default_pars, ini_pars){
@@ -512,7 +512,7 @@ var initPars = function(default_pars, ini_pars){
 		mainForm.checkbox10.checked = true;
 		mainForm.checkbox11.checked = false;
 		mainForm.checkbox12.checked = false;
-	}	
+	}
 	if(!mainForm.checkbox3.checked){
 		mainForm.checkbox13.disabled = true;
 		mainForm.checkbox14.disabled = true;
@@ -565,17 +565,17 @@ else {
 	ini_pars = {};
 }
 
-initPars(default_pars, ini_pars);	
+initPars(default_pars, ini_pars);
 
 mainForm.button.oncommand = function(id,event){
-	var dir_name = fsys.dlg.opendir(mainForm.edit.text); 
+	var dir_name = fsys.dlg.opendir(mainForm.edit.text);
 	if(dir_name){
 		mainForm.edit.text = dir_name;
 	}
 }
 
 mainForm.button2.oncommand = function(id,event){
-	var dir_name = fsys.dlg.opendir(mainForm.edit2.text); 
+	var dir_name = fsys.dlg.opendir(mainForm.edit2.text);
 	if(dir_name){
 		mainForm.edit2.text = dir_name;
 	}
@@ -606,7 +606,7 @@ mainForm.button4.oncommand = function(id,event){
 mainForm.button5.oncommand = function(id,event){
 	fsys.setCurDir(homedir);
 	var path_parse = io.splitpath(mainForm.edit5.text);
-	var file_name = fsys.dlg.open("文本文件(*.txt;*.ini)|*.txt;*.ini(*.*)|所有文件(*.*)|*.*",
+	var file_name = fsys.dlg.open("文本文件(*.txt;*.ini)|*.txt;*.ini|所有文件(*.*)|*.*",
 							,path_parse.dir, , ,path_parse.file);
 	if(file_name){
 		mainForm.edit5.text = file_name;
@@ -645,7 +645,7 @@ mainForm.checkbox.oncommand = function(id,event){
 		mainForm.checkbox8.disabled = true;
 		mainForm.checkbox9.disabled = true;
 	}
-	setFsysPar();	
+	setFsysPar();
 }
 
 mainForm.checkbox2.oncommand = function(id,event){
@@ -669,7 +669,7 @@ mainForm.checkbox2.oncommand = function(id,event){
 		mainForm.checkbox11.disabled = true;
 		mainForm.checkbox12.disabled = true;
 	}
-	setFsysPar();	
+	setFsysPar();
 }
 
 mainForm.checkbox3.oncommand = function(id,event){
@@ -694,7 +694,7 @@ mainForm.checkbox3.oncommand = function(id,event){
 		mainForm.checkbox15.disabled = true;
 		mainForm.combobox.disabled = true;
 	}
-	setFsysPar();	
+	setFsysPar();
 }
 
 mainForm.checkbox4.oncommand = function(id,event){
@@ -713,7 +713,7 @@ mainForm.checkbox5.oncommand = function(id,event){
 	if(mainForm.checkbox5.checked and mainForm.checkbox6.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_textall;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efiall_bin)); 
+							fsys.getFileName(default_pars.efiall_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -721,7 +721,7 @@ mainForm.checkbox5.oncommand = function(id,event){
 	elseif(mainForm.checkbox5.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_text32;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efi32_bin)); 
+							fsys.getFileName(default_pars.efi32_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -731,11 +731,11 @@ mainForm.checkbox5.oncommand = function(id,event){
 	elseif(mainForm.checkbox6.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_text64;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efi64_bin)); 
+							fsys.getFileName(default_pars.efi64_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
-	}	
+	}
 	else {
 		mainForm.static4.text = default_pars.efi_text;
 		mainForm.edit4.disabled = true;
@@ -748,7 +748,7 @@ mainForm.checkbox6.oncommand = function(id,event){
 	if(mainForm.checkbox5.checked and mainForm.checkbox6.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_textall;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efiall_bin)); 
+							fsys.getFileName(default_pars.efiall_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -756,7 +756,7 @@ mainForm.checkbox6.oncommand = function(id,event){
 	elseif(mainForm.checkbox5.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_text32;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efi32_bin)); 
+							fsys.getFileName(default_pars.efi32_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -764,7 +764,7 @@ mainForm.checkbox6.oncommand = function(id,event){
 	elseif(mainForm.checkbox6.checked){
 		mainForm.static4.text = default_pars.efi_text + default_pars.efi_text64;
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(default_pars.efi64_bin)); 
+							fsys.getFileName(default_pars.efi64_bin));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -780,7 +780,7 @@ mainForm.checkbox6.oncommand = function(id,event){
 }
 
 mainForm.checkbox17.oncommand = function(id,event){
-	setBootPar();	
+	setBootPar();
 }
 
 mainForm.checkbox7.oncommand = function(id,event){
@@ -809,7 +809,7 @@ mainForm.checkbox10.oncommand = function(id,event){
 		if(!mainForm.checkbox10.checked and !mainForm.checkbox11.checked){
 			mainForm.checkbox10.checked = true;
 		}
-	}	
+	}
 	setFsysPar();
 }
 
@@ -837,7 +837,7 @@ mainForm.checkbox13.oncommand = function(id,event){
 		if(!mainForm.checkbox13.checked && !mainForm.checkbox14.checked){
 			mainForm.checkbox13.checked = true;
 		}
-	}	
+	}
 	setFsysPar();
 }
 
@@ -849,7 +849,7 @@ mainForm.checkbox14.oncommand = function(id,event){
 		if(!mainForm.checkbox13.checked && !mainForm.checkbox14.checked){
 			mainForm.checkbox14.checked = true;
 		}
-	}	
+	}
 	setFsysPar();
 }
 
@@ -867,7 +867,7 @@ mainForm.checkbox18.oncommand = function(id,event){
 		mainForm.edit8.text =
 					string.replace(mainForm.edit8.text, "\s*-[Qq]", "");
 	}
-	
+
 }
 
 mainForm.combobox.oncommand = function(id,event){
@@ -882,7 +882,7 @@ mainForm.edit6.onChange = function(){
 		}
 		else {
 			win.msgbox("不能使用 空格 字符。");
-		}	
+		}
 	}
 	setOtherPar();
 }
@@ -920,7 +920,7 @@ mainForm.button7.oncommand = function(id,event){
 		else {
 			statusbar.setText("线程已满", tnum);
 		}
-		tnum --;	
+		tnum --;
 		mainForm.button7.disabled = true;
 	}
 	else {
@@ -1023,9 +1023,9 @@ mainForm.edit5.wndproc = {
 }
 
 mainForm.edit7.wndproc = function(hwnd,message,wParam,lParam){
-	select(message) { 
+	select(message) {
 		case 0x233/*_WM_DROPFILES*/ {
-			mainForm.edit7.text = win.getDropFile(wParam)[1]; 
+			mainForm.edit7.text = win.getDropFile(wParam)[1];
 		}
 	}
 }
@@ -1034,12 +1034,12 @@ mainForm.edit.onChange = function(){
 	fsys.setCurDir(homedir);
 	if(io.exist(mainForm.edit.text)){
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(mainForm.edit3.text)); 
+							fsys.getFileName(mainForm.edit3.text));
 		if(io.exist(newname)){
 			mainForm.edit3.text = newname;
 		}
 		var newname = io.joinpath(mainForm.edit.text,
-							fsys.getFileName(mainForm.edit4.text)); 
+							fsys.getFileName(mainForm.edit4.text));
 		if(io.exist(newname)){
 			mainForm.edit4.text = newname;
 		}
@@ -1086,7 +1086,7 @@ mainForm.edit11.onChange = function(){
 
 var setIniPar = function(...){
 	/*var语句声明的变量作用域限于函数内部*/
-	
+
 }
 
 subscribe("loadini",function(...){
@@ -1124,7 +1124,7 @@ mainForm.checkbox19.oncommand = function(id,event){
 			}
 		}
 	}
-	
+
 }
 
 mainForm.onClose = function(hwnd,message,wParam,lParam){

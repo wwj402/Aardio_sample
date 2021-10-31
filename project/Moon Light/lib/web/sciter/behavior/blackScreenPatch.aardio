@@ -6,11 +6,11 @@ var mpv = web.sciter.behavior.player.mpv;
 
 namespace web.sciter.behavior.blackScreenPatch{
 	onButtonStateChanged  = function (scTarget,scOwner,reason,behaviorParams) {
-		select( scTarget.innerText ) {
-			case "补丁1" {
+		select( scTarget.id ) {
+			case "p1" {
 				mpv.setOption( "profile", "gpu-hq" )
 			}
-			case "补丁2" {
+			case "p2" {
 				mpv.setOption( "vo", "direct3d" )
 			}
 		}

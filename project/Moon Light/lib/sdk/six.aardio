@@ -33,6 +33,9 @@ class six{
 		} import console console.dumpJson(ret)
 		return ret; 
 	}
+	getRoomInfo = function(){
+		return this.getStreamInfo();
+	}
 }
 namespace six{
     info = {

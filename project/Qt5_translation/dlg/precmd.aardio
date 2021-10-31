@@ -1,0 +1,207 @@
+import win.ui;
+import fsys.ini;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=719;bottom=479)
+winform.add(
+button={cls="button";text="执行";left=630;top=20;right=705;bottom=45;ah=1;aw=1;tabstop=1;z=3};
+button2={cls="button";text="执行";left=630;top=50;right=705;bottom=75;ah=1;aw=1;tabstop=1;z=5};
+button3={cls="button";text="执行";left=630;top=80;right=705;bottom=105;ah=1;aw=1;tabstop=1;z=8};
+edit={cls="edit";left=145;top=20;right=520;bottom=45;ah=1;aw=1;edge=1;tabstop=1;z=2};
+edit2={cls="edit";left=535;top=20;right=615;bottom=45;ah=1;aw=1;edge=1;tabstop=1;z=9};
+edit3={cls="edit";left=145;top=50;right=520;bottom=75;ah=1;aw=1;edge=1;tabstop=1;z=10};
+edit4={cls="edit";left=535;top=50;right=615;bottom=75;ah=1;aw=1;edge=1;tabstop=1;z=11};
+edit5={cls="edit";left=145;top=80;right=520;bottom=105;ah=1;aw=1;edge=1;tabstop=1;z=12};
+edit6={cls="edit";left=535;top=80;right=615;bottom=105;ah=1;aw=1;edge=1;tabstop=1;z=13};
+edit7={cls="edit";left=15;top=130;right=705;bottom=470;ah=1;aw=1;edge=1;hscroll=1;multiline=1;tabstop=1;vscroll=1;z=6};
+static={cls="static";text="占位符参数(lupdate)";left=15;top=20;right=130;bottom=45;ah=1;aw=1;center=1;transparent=1;z=1};
+static2={cls="static";text="占位符参数(lconvert)";left=15;top=50;right=130;bottom=75;ah=1;aw=1;center=1;transparent=1;z=4};
+static3={cls="static";text="占位符参数(lrelease)";left=15;top=80;right=130;bottom=105;ah=1;aw=1;center=1;transparent=1;z=7}
+)
+/*}}*/
+
+winform.enableDpiScaling(false);
+winform.show();
+var homedir = "\";
+var ininame = io._exefile + ".ini";
+var readIniPar = function(...){
+	var inipath;
+	if(#...){
+		inipath = ...;
+		inipath = io.fullpath(inipath);
+	}
+	else {
+		inipath = io.joinpath(homedir, ininame);
+	}
+	var iniobj = fsys.ini(inipath);
+	var inisec = iniobj.getSection("cmdline_par");
+	if(!inisec["lupdate"]){
+		winform.edit.text =  qttranslator.cmdline_par["lupdate"];
+	}
+	else {
+		winform.edit.text =  inisec["lupdate"];
+	}
+	if(!inisec["lconvert"]){
+		winform.edit3.text =  qttranslator.cmdline_par["lconvert"];
+	}
+	else {
+		winform.edit3.text =  inisec["lconvert"];
+	}
+	if(!inisec["lrelease"]){
+		winform.edit5.text =  qttranslator.cmdline_par["lrelease"];
+	}
+	else {
+		winform.edit5.text =  inisec["lrelease"];
+	}
+
+};
+var saveIniPar = function(...){
+	var inipath;
+	if(#...){
+		inipath = ...;
+		inipath = io.fullpath(inipath);
+	}
+	else {
+		inipath = io.joinpath(homedir, ininame);
+	}
+	var iniobj = fsys.ini(inipath);
+	var inisec = iniobj.getSection("cmdline_par");
+	if(#string.trim(winform.edit.text)){
+		inisec["lupdate"] = winform.edit.text;
+	}
+	if(#string.trim(winform.edit.text)){
+		inisec["lconvert"] = winform.edit3.text;
+	}
+	if(#string.trim(winform.edit.text)){
+		inisec["lrelease"] = winform.edit5.text;
+	}
+	inisec.save();
+
+};
+
+readIniPar();
+var constemp;
+with qttranslator {
+	constemp = mainForm.checkbox.checked or mainForm.checkbox2.checked or
+						mainForm.checkbox3.checked;
+	if(constemp){
+		winform.button.disabled = true;
+		winform.button2.disabled = true;
+		winform.button3.disabled = true;
+
+		if(mainForm.checkbox.checked){
+			process(, "cmd /c " + '"' +
+						io.fullpath(lupdatecmd(, , , winform.edit7)) + '"').waitOne() ;
+		}
+		if(mainForm.checkbox2.checked){
+			process(, "cmd /c " + '"' +
+						io.fullpath(lconvertcmd(, , , winform.edit7)) + '"').waitOne() ;
+		}
+		if(mainForm.checkbox3.checked){
+			process(, "cmd /c " + '"' +
+						io.fullpath(lreleasecmd(, , , winform.edit7)) + '"').waitOne() ;
+		}
+		winform.button.disabled = false;
+		winform.button2.disabled = false;
+		winform.button3.disabled = false;
+	}
+}
+winform.edit.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit.showInfoTip("参数占位符", "不要修改占位符" +
+										'\r\n' + "例如：%...%，<...>");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+winform.edit2.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit2.showInfoTip("语言区域后缀",
+							"用于 <ts-files> 文件" + '\r\n' +
+							"例如：_zh_CN" + '\r\n' + "默认为空");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+winform.edit3.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit3.showInfoTip("参数占位符", "不要修改占位符" +
+										'\r\n' + "例如：%...%，<...>");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+winform.edit4.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit4.showInfoTip("语言区域后缀",
+							"用于 <infile> 文件" + '\r\n' +
+							"例如：_zh_CN" + '\r\n' + "默认为空");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+winform.edit5.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit5.showInfoTip("参数占位符", "不要修改占位符" +
+										'\r\n' + "例如：%...%，<...>");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+winform.edit6.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x202/*_WM_LBUTTONUP*/ {
+			winform.edit6.showInfoTip("语言区域后缀",
+							"用于 <ts-files> 文件" + '\r\n' +
+							"例如：_zh_CN" + '\r\n' + "默认为 _zh_CN");
+		}
+		else {
+		}
+	}
+	//无返回值则继续调用默认回调函数
+}
+
+winform.button.oncommand = function(id,event){
+	winform.button.disabled = true;
+	process(, "cmd /c " + '"' +
+						io.fullpath(qttranslator.lupdatecmd(
+						winform.edit.text, winform.edit2.text, ,)) + '"').waitOne();
+	winform.button.disabled = false;
+}
+
+winform.button2.oncommand = function(id,event){
+	winform.button2.disabled = true;
+	process(, "cmd /c " + '"' +
+						io.fullpath(qttranslator.lconvertcmd(
+						winform.edit3.text, winform.edit4.text, ,)) + '"').waitOne();
+	winform.button2.disabled = false;
+}
+
+winform.button3.oncommand = function(id,event){
+	winform.button3.disabled = true;
+	process(, "cmd /c " + '"' +
+						io.fullpath(qttranslator.lreleasecmd(
+						winform.edit5.text, winform.edit6.text, ,)) + '"').waitOne();
+	winform.button3.disabled = false;
+}
+
+winform.onClose = function(hwnd,message,wParam,lParam){
+    qttranslator.mainForm.button6.disabled = false;
+}
+
+win.loopMessage();
+return winform;

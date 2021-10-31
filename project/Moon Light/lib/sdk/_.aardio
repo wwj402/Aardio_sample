@@ -7,8 +7,8 @@ class sdk{
 		this = v(url);
 		var _getStreamInfo = this.getStreamInfo;
 	};
-	getStreamInfo = function(){
-		var ret, err = _getStreamInfo() 
+	getStreamInfo = function(...){
+		var ret, err = _getStreamInfo(...) 
 		if( !ret ){
 			return null, err; 
 		}		

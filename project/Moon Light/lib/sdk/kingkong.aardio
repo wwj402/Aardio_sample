@@ -40,6 +40,9 @@ class kingkong{
 
 		return ret; 
 	}
+	getRoomInfo = function(){
+		return this.getStreamInfo();
+	}
 }
 namespace kingkong{
     info = {

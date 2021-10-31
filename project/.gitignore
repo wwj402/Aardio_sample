@@ -2,3 +2,7 @@
 **/Publish/
 **/dist/
 **/Debug/
+**/download/
+**/downloads/
+**/setting.json
+**/Env/

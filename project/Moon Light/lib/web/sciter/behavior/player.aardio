@@ -3,8 +3,8 @@ import helper;
 import abz.mpv;
 import win.ui.tracker
 
-namespace web.sciter.behavior.player{ 
-	onAttach = function( scOwner ){  
+namespace web.sciter.behavior.player{
+	onAttach = function( scOwner ){
 		var cType = scOwner.getAttribute("cls");
 		var tParam = { bottom=1;right=1;left=0;top=0;cls=cType;text="";autoResize=false};
 		var dt = scOwner.getAttribute("data-table")
@@ -23,26 +23,69 @@ namespace web.sciter.behavior.player{
 				if( v ){
 					..io.print("cache-size 总缓存", v ++ " kb", v / 1024 ++ " MB")
 				}
-			}
+			};
 			["cache-used"] = function(v){
 				if( v ){
-					..io.print("cache-used 已用缓存", v ++ " kb", v / 1024 ++ " MB")
+					//..io.print("cache-used 已用缓存", v ++ " kb", v / 1024 ++ " MB")
+					mpv.command("show-text", "已用缓存" ++ v ++ "kb", 3000 )
 				}
-			}
+			};
 			["cache-buffering-state"] = function(v){
 				if( v ){
-					..io.print("cache-buffering-state 缓冲状态", v ++ "%")
+					if(tonumber(v) >= 95){
+						mpv.setOption("osd-msg1", "")
+					}
+					//..io.print("cache-buffering-state 缓冲状态", v ++ "%")
+					mpv.command("show-text", "缓冲状态" ++ v ++ "%", 3000 )
 				}
-			}
+			};
 			["paused-for-cache"] = function(v){
 				if( v ){
-					..io.print("paused-for-cache 暂停播放，等待缓存中", v)
+					//..io.print("paused-for-cache 暂停播放，等待缓存中", v)
+					mpv.command("show-text", "暂停播放，等待缓存中" ++ v, 3000 )
 				}
-			}			
+			};
+			["idle-active"] = function(v){
+				if( v == "yes"){
+					//..io.print("paused-for-cache 暂停播放，等待缓存中", v)
+					//mpv.setOption("osd-msg1", "未加载视频，请加载")
+					mpv.command("show-text", "未加载视频，请加载", 10000 )
+				}
+				else {
+					//mpv.setOption("osd-msg1", "加载视频。。。")
+					mpv.command("show-text", "加载视频。。。", 10000 )
+				}
+			};
+			["core-idle"] = function(v){
+				if( v == "yes"){
+					//..io.print("paused-for-cache 暂停播放，等待缓存中", v)
+					mpv.setOption("osd-msg1", "未能加载视频，请重新加载")
+					//mpv.command("show-text", "未能加载视频，请重新加载", 10000 )
+				}
+				else {
+					var vw = mpv.getProperty("width", "string");
+					var vh = mpv.getProperty("height", "string");
+					var buf = mpv.getProperty("cache-buffering-state", "string");
+					if(#vw and #vh and tonumber(buf) > 80){
+						mpv.setOption("osd-msg1", "")
+						mpv.command("show-text", vw + " x " + vh, 30000);
+					}
+				}				
+			};	
 			seeking = 1;						
 		}
 		for(k,v in  p ){
-			mpv.observeProperty(k)
+			select(k) {
+				case "idle-active" {
+					mpv.observeProperty(k, "string");
+				}
+				case "core-idle" {
+					mpv.observeProperty(k, "string");
+				}
+				else {
+					mpv.observeProperty(k);
+				}
+			}
 		
 		}
 		mpv.onPropertyChange = function(name,value){
@@ -59,24 +102,29 @@ namespace web.sciter.behavior.player{
 		//启动一个定时器用于分发播放器事件（不然不会触发任何事件）
 		ctrl.addtimer( 5, 
 			function(){ 
-				var event = mpv.waitEvent(0); 
-				if( event.id == 8/*_MPV_EVENT_FILE_LOADED*/){
-/*
-					winform.cbSubtitles.trackList();//获取视频加载的字幕
-					winform.text = mplayer.getMediaTitle();
-					winform.btnPlay.text = "停止";
-*/
-				}
+				var event = mpv.waitEvent(0);
+
+				select(event.id) {
+					case 4/*_MPV_END_FILE_REASON_ERROR*/ {
+						..win.msgbox("播放错误")
+					}
+					case 2/*_MPV_END_FILE_REASON_STOP*/ {
+						mpv.setOption("osd-msg1", "播放完成，请加载")
+					}
+					else {
+					}
+				} 
 			} 
 		)				
 				
 		var mpvOption = {
     		["osd-font-size"] = 25;// 字体大小
-    		["osd-bold"] = "yes";// 字体大小    
+    		["osd-bold"] = "yes";   
     		["osd-spacing"] = 2;// 字体间距
     		["osd-align-x"] = "center";// 显示位置 
     		["osd-align-y"] = "bottom";
     		["osd-back-color"] = "#171111";// 背景颜色
+    		["idle"] = "yes";// wait idly instead of quitting
 		}
 		
 		for(k,v in mpvOption){

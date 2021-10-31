@@ -1,69 +1,237 @@
-﻿import web.json;    
+﻿import web.json;
 import inet.http;
+import inet.url;
 import crypt;
+import crypt.bin;
+import win.clip;
 
 namespace sdk;
 class huya{
 	ctor(url){
+		//var http = ..inet.http(, "https=http://127.0.0.1:10802");
 		var http = ..inet.http();
 		http.disableCache();
 	};
-	getStreamInfo = function(){
-		var html = http.get( url )
-		if( !html ){
-			return null, "网络连接有误"; 
+	getRoomInfo = function(){
+		var ret;
+		try{
+			var html = http.get( url )
+			if( !html ){
+				return null, "网络连接有误"; 
+			}
+			//..win.clip.write(html);
+			var roomData = ..string.match( html, "<@TT_ROOM_DATA =@>(.+?\})\;" )	
+			var profileData = ..string.match( html, "<@TT_PROFILE_INFO =@>(.+?\})\;" ) 
+			//var playerConfig = ..string.match( html , "<@hyPlayerConfig =@>(.+?\})\;" )  
+			if( !(roomData ? profileData) ){
+				return null, "网址数据已更新，暂时不支持"; 
+			}
+			var room = ..web.json.parse( roomData );
+			var profile = ..web.json.parse( profileData );
+			//var player = ..web.json.parse( playerConfig );
+			ret = {
+				website = "huya";
+				roomUrl = url;
+				roomId = profile.profileRoom;
+				ownerName = profile.nick;
+				roomName = room.introduction;
+				avatarUrl = profile.avatar;	
+				isLive = !!room.isOn;	
+			};
 		}
-		var roomData = ..string.match( html, "<@TT_ROOM_DATA =@>(.+?\})\;" )	
-		var profileData = ..string.match( html, "<@TT_PROFILE_INFO =@>(.+?\})\;" ) 
-		var playerConfig = ..string.match( html , "<@hyPlayerConfig =@>(.+?\})\;" )  
-		if( !(roomData ? profileData) ){
-			return null, "网址数据已更新，暂时不支持"; 
+		catch(e){
+			return null, e;
 		}
-		var room = ..web.json.parse( roomData );
-		var profile = ..web.json.parse( profileData );
-		var player = ..web.json.parse( playerConfig )
-			
+		return ret;
+	}
+	get_stream_name = function(e){
+		var i, b = ..table.unpack(..string.split(e, '?'));
+		var r = ..string.split(i, '/');
+		var s = ..string.replace(r[#r], '\\.<flv>|<m3u8>', '');
+		return s, b
+	}
+	live = function(e){
+		var i, b = ..table.unpack(..string.split(e, '?'));
+		var r = ..string.split(i, '/');
+		var s = ..string.replace(r[#r], '\\.<flv>|<m3u8>', '');
+		var c = ..string.split(b, '&', 4);
+		var n = {};
+		for(k,v in c){
+			if(v !== ""){
+				var i, j = ..table.unpack(..string.split(v, '='));
+				n[i] = j;
+			}
+		
+		}
+		var fm = ..inet.url.decode(n['fm']);
+		var u = ..crypt.bin.decodeUrlBase64(fm);
+		var p = ..string.split(u, '_', 1);
+		var f = tostring(..time().getMilliTime());
+		var ll = n['wsTime'];
+		var t = '0';
+		var h = ..string.join({'_', p, t, s, f, ll});
+		var m = ..crypt.md5(h, false);
+		var y = c[#c];
+		var url = ..string.format("%s?wsSecret=%s&wsTime=%s&u=%s&seqid=%s&%s",
+									i, m, ll, t, f, y);
+		return url
+	}
+	get_real_url = function(roomid){
+		var room_url = 'https://m.huya.com/' + roomid;
+		var header = {
+			['Content-Type'] = 'application/x-www-form-urlencoded';
+			['User-Agent'] = 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) ' +
+					'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36 '
+		}
+		var response = http.get(room_url, header);
+		if( !response ){
+			return null, "网络连接有误";
+		}
+		//var livelineurl = ..string.match(response, '"liveLineUrl"\\:"([^"]+)",');
+		//livelineurl = ..crypt.bin.decodeUrlBase64(livelineurl);
+		var info = ..string.match(response, 
+							"\<script\> window.HNF_GLOBAL_INIT = (.*?)\</script\>");
+		info ?= ..web.json.parse(info);
+		var livestatus = info["roomInfo"]["eLiveStatus"];
+		var livelineurl = ..crypt.bin.decodeUrlBase64(info.roomProfile.liveLineUrl);
+		var rateinfo = info["roomInfo"]["tLiveInfo"]["tLiveStreamInfo"]["vBitRateInfo"]["value"];
+		var streaminfo = info["roomInfo"]["tLiveInfo"]["tLiveStreamInfo"]["vStreamInfo"]["value"];
+		var real_url = {};
+		if(!info){
+			return null, "无法解析数据";
+		}
+		if(livestatus == 2){
+			var cdni = ..math.random(1, #streaminfo);
+			real_url["flv"] = streaminfo[cdni]["sFlvUrl"] + "/" + streaminfo[cdni]["sStreamName"] +	"." +
+								streaminfo[cdni]["sFlvUrlSuffix"] + "?" + streaminfo[cdni]["sFlvAntiCode"];
+			real_url["hls"] = streaminfo[cdni]["sHlsUrl"] + "/" + streaminfo[cdni]["sStreamName"] + "." +
+								streaminfo[cdni]["sHlsUrlSuffix"] + "?" + streaminfo[cdni]["sHlsAntiCode"];
+		}
+		if(livestatus == 3){
+			real_url["flv"] = info["roomInfo"]["tReplayInfo"]["tReplayVideoInfo"]["sUrl"];
+			real_url["hls"] = info["roomInfo"]["tReplayInfo"]["tReplayVideoInfo"]["sUrl"];
+		}
+		if(!real_url and #livelineurl){
+			if(..string.indexOf(livelineurl, 'replay')){
+				real_url = {["replay"] = "https:" + livelineurl};
+			}
+			else {
+				var name, key = this.get_stream_name(livelineurl);
+				var base_url = "http://121.12.115.29/tx.hls.huya.com/src/" + name;
+				real_url = {
+					["hls"] = base_url + ".m3u8?" + key;
+					["flv"] = base_url + ".flv?" + key;
+				}
+			}
+		}
+		for(k,v in rateinfo){
+			if(v["iBitRate"] != 0){
+				real_url["hls_" + tostring(v["iBitRate"])] =
+							real_url["hls"] + "&rate=" + tostring(v["iBitRate"]);
+				real_url["flv_" + tostring(v["iBitRate"])] =
+							real_url["flv"] + "&rate=" + tostring(v["iBitRate"]);	
+			}
+		
+		}
+		if(!#real_url["flv"]){
+			return null, "无法解析数据";
+		}
+		//..console.dump(real_url);
+		return real_url; 	
+	}
+		
+	getStreamInfo = function(cdn = "ws-h5", rate = 0){
+		var data, err = this.getRoomInfo();
+		if( !data ){
+			return null, "获取房间基本信息失败"; 
+		}	
 		var streamUrl;
-		if( room.isOn ){
-			header = {
-    			['Content-Type'] = 'application/x-www-form-urlencoded';
-    			['User-Agent'] = 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36';
-   		 	};
-   		 	html = http.get(url, header, "");
-   		 	streamUrl = ..string.match(html, "hasvedio\: '(.+\.m3u8)");
-   		 	streamUrl ?= ..string.replace(streamUrl, "_.*\.m3u8", "\.m3u8");
-   		 	streamUrl ?= "https:" ++ streamUrl;
-			//var gameStreamInfo = player.stream.data[1].gameStreamInfoList[1]
-			//streamUrl = gameStreamInfo.sFlvUrl ++ "/" ++ gameStreamInfo.sStreamName ++ ".flv" ++ "?" ++ gameStreamInfo.sFlvAntiCode
+		try{
+			var streamUrls = this.get_real_url(data.roomId);
+			if(rate == 3){
+				streamUrl = streamUrls['flv_2000'];
+				streamUrl := streamUrls['flv'];
+			}
+			else {
+				streamUrl = streamUrls['flv'];
+			}
+			if(!#streamUrl){
+				if( data.isLive ){
+					var header = {
+						['Content-Type'] = 'application/x-www-form-urlencoded';
+						['User-Agent'] = 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36';
+							};
+					html = http.get(url, header, "");
+					if(!html){
+						return null, "网络连接有误";
+					}
+					//..win.clip.write(html);
+					var info = ..string.match(html, 
+							"\<script\> window.HNF_GLOBAL_INIT = (.*?)\</script\>");
+					info ?= ..web.json.parse(info);
+					var livestatus = info["roomInfo"]["eLiveStatus"];
+					var livelineurl = ..crypt.bin.decodeUrlBase64(info.roomProfile.liveLineUrl);
+					var rateinfo = info["roomInfo"]["tLiveInfo"]["tLiveStreamInfo"]["vBitRateInfo"]["value"];
+					var streaminfo = info["roomInfo"]["tLiveInfo"]["tLiveStreamInfo"]["vStreamInfo"]["value"];
+					var real_url = {};
+					if(livestatus == 2){
+						var cdni = ..math.random(1, #streaminfo);
+						real_url["flv"] = streaminfo[cdni]["sFlvUrl"] + "/" + streaminfo[cdni]["sStreamName"] +	"." +
+											streaminfo[cdni]["sFlvUrlSuffix"] + "?" + streaminfo[cdni]["sFlvAntiCode"];
+						real_url["hls"] = streaminfo[cdni]["sHlsUrl"] + "/" + streaminfo[cdni]["sStreamName"] + "." +
+											streaminfo[cdni]["sHlsUrlSuffix"] + "?" + streaminfo[cdni]["sHlsAntiCode"];
+					}
+					if(livestatus == 3){
+						real_url["flv"] = info["roomInfo"]["tReplayInfo"]["tReplayVideoInfo"]["sUrl"];
+						real_url["hls"] = info["roomInfo"]["tReplayInfo"]["tReplayVideoInfo"]["sUrl"];
+					}
+					if(!real_url and #livelineurl){
+						if(..string.indexOf(livelineurl, 'replay')){
+							real_url = {["replay"] = "https:" + livelineurl};
+						}
+						else {
+							var name, key = this.get_stream_name(livelineurl);
+							var base_url = "http://121.12.115.29/tx.hls.huya.com/src/" + name;
+							real_url = {
+								["hls"] = base_url + ".m3u8?" + key;
+								["flv"] = base_url + ".flv?" + key;
+							}
+						}
+					}
+					for(k,v in rateinfo){
+						if(v["iBitRate"] != 0){
+							real_url["hls_" + tostring(v["iBitRate"])] =
+										real_url["hls"] + "&rate=" + tostring(v["iBitRate"]);
+							real_url["flv_" + tostring(v["iBitRate"])] =
+										real_url["flv"] + "&rate=" + tostring(v["iBitRate"]);	
+						}
+					
+					}
+				}
+			}
+			data.streamUrl = streamUrl;
 		}
-		return {
-			website = "huya";
-			roomUrl = url;
-			roomId = profile.profileRoom;
-			ownerName = profile.nick;
-			roomName = room.introduction;
-			isLive = !!room.isOn;
-			streamUrl = streamUrl;
-			avatarUrl = profile.avatar;
-			aid = profile.aid;
-			yyid = profile.yyid;
-		} 
+		catch(e){
+			return null, e;
+		}
+		return data;
 	}
 }
 namespace huya{
-    info = {
-        name = "虎牙";
-        url = "http://www.huya.com/";
-    }
-    
- 	canHandle = function(url){
+	info = {
+		name = "虎牙";
+		url = "http://www.huya.com/";
+	}
+	
+		canHandle = function(url){
 		return ..string.match( url, "<@www.huya.com/@>(\w+)" ); 
 	}      	
 }
 
 /*
 import console;
-console.open()
-console.dump(huya("https://www.huya.com/20427769").getStreamInfo());
-execute("pause")
+console.open();
+console.dump(huya("https://www.huya.com/880351").getStreamInfo());
+//console.dump(huya("https://www.huya.com/274874").getStreamInfo(, 3));
+execute("pause");
 */

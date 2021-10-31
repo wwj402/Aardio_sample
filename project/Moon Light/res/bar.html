@@ -1,4 +1,4 @@
-﻿<html>
+﻿<html lang=zh>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
 		<link rel="stylesheet" href="style/common.css">
@@ -36,7 +36,7 @@
 		{
 			var(liw):2000px;
 			var(divw):-2000px;
-			var(ddt):8s;
+			var(ddt):12000;
 			margin:2dip 2dip;
 			width:*;//max-content
 			color:#FF7F00;
@@ -49,7 +49,7 @@
 			width:max-content;
 			color:#EEE;
 			transform:translate(var(liw,100%),0%);
-			transition: transform(linear,8s);
+			transition: transform 12s linear;
 		}
 		#container > #danmu > li > div[move="set"]
 		{
@@ -58,21 +58,23 @@
 		#container #bottom
 		{
 			flow:horizontal;
-			height:25dip;
-			width: 350dip;
+			height:26dip;
+			width: min-content;
 			margin-left:*;
 			margin-right:*;
 			margin-top:*;
-			margin-bottom:20dip;
+			margin-bottom:30dip;
 			padding: 10dip;
-			bottom:20dip;
 			background-color:rgba(206, 94, 106, 0.788);
 			vertical-align:middle;
 		}
 		.common-ico
 		{
-			font-size:20dip;
-			vertical-align:middle;
+			//display:inline-block;
+			//vertical-align:middle;
+			//padding:5dip;
+			width:min-content;
+			height:max-content;
 		}
 		#container #bottom .ico
 		{
@@ -100,10 +102,10 @@
 
 		.vol-block
 		{
-			width: 170ip;
+			width: max-content;
 			color:#EEE;
-			margin-top:*;
-			margin-bottom:*;
+			//margin-top:*;
+			//margin-bottom:*;
 		}
 
 		.danmu-block .danmu
@@ -114,7 +116,7 @@
 		#container  #bottom .vol-ico
 		{
 			behavior:check ~vol-ico;
-			width:26dip;
+			width:25dip;
 		}
 
 		#container  #bottom .vol-hslider
@@ -149,16 +151,11 @@
 		{
 			behavior: ~stop;
 		}
-		#container #bottom .sidebar
-		{
-			assigned!:
-				self:checked = true;
-		}
+
 		.setting-block
 		{
 			behavior: popup-menu;
-			margin-left: *;
-			width: 20dip;
+			width: 25dip;
 		}
 
 		.audio-output-device
@@ -166,7 +163,7 @@
 			behavior: ~audio-output-device;
 		}
 
-		.black-screen-patch li
+		.black-screen-patch
 		{
 			behavior: radio ~black-screen-patch;
 		}
@@ -216,14 +213,19 @@
 		toggle
 		{
 			style-set: std-toggle;
-			click!:
-				$1(#container > #danmu)::visibility = $1(.danmuico):checked ? "visible" # "none";
-
 		}
 		label
 		{
 			color:#EEE;
+			width:max-content;
 		}
+		menu.popup.common-menu.setting-menu>li.audio-output-device:lang(zh) { content: "音频输出设备"; }
+		menu.popup.common-menu.setting-menu>li.black-screen-patch:lang(zh) { content: "黑屏补丁"; }
+		li.black-screen-patch>menu.common-menu>li#p1:lang(zh) { content: "补丁1"; }
+		li.black-screen-patch>menu.common-menu>li#p2:lang(zh) { content: "补丁2"; }
+		li.black-screen-patch>menu.common-menu>li#note:lang(zh) { content: "注意：请重新打开软件后，再选择其中一个"; }
+		label#sidebar:lang(zh) { content: "侧边"; }
+		label#danmuku:lang(zh) { content: "弹幕"; }
 
 		</style>
 	</head>
@@ -245,10 +247,10 @@
 				<div id="stop" class="stop-block common-ico">
 					<i class="fa fa-stop-circle ico"></i>
 				</div>
-				<label>侧边</label>
-				<toggle name="sidebar" class="sidebar common-ico" />
-				<label>弹幕</label>
-				<toggle name="danmuico" class="danmuico common-ico" />
+				<label id="sidebar">Sidebar</label>
+				<toggle name="sidebar" class="sidebar" checked/>
+				<label id="danmuku">Danmuku</label>
+				<toggle name="danmuico" class="danmuico" />
 <!--
 				<div class="sidebar-block">
 				<label>侧边</label>
@@ -268,15 +270,15 @@
 				<div class="setting-block common-ico" align-popup="right">
 					<i class="fa fa-cog ico"></i>
 					<menu class="popup common-menu setting-menu" align-popup="right">
-						<li class="audio-output-device">音频输出设备
+						<li class="audio-output-device">Audio output device
 							<menu class="common-menu"></menu>
 						</li>
-						<li class="black-screen-patch">黑屏补丁
+						<li class="black-screen-patch">Black screen patch
 							<menu class="common-menu">
-								<li name="black-screen-patch">补丁1</li>
-								<li name="black-screen-patch">补丁2</li>
+								<li name="black-screen-patch" id="p1">Patch 1</li>
+								<li name="black-screen-patch" id="p2">Patch 2</li>
 								<hr>
-								<li name="black-screen-patch" checked>注意：请重新打开软件后，再选择其中一个</li>
+								<li name="black-screen-patch" id="note" checked>Note: Please reopen the software before selecting one</li>
 							</menu>
 						</li>
 					</menu>

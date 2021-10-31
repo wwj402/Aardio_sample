@@ -28,6 +28,9 @@ class quanmin{
 			isLive = room.play_status;
 			streamUrl = room.play_status ? room.room_lines[1].flv[ "5" ].src;
 		} 	
+	}
+	getRoomInfo = function(){
+		return this.getStreamInfo();
 	}	
 }
 namespace quanmin{

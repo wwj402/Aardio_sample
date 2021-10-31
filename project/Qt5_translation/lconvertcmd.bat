@@ -1,0 +1,15 @@
+@echo off
+setlocal enabledelayedexpansion
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtquickcontrols_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtquickcontrols_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\designer_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\designer_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\assistant_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\assistant_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qt_help_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qt_help_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtscript_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtscript_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtbase_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtbase_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtxmlpatterns_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtxmlpatterns_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtquickcontrols2_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtquickcontrols2_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtconnectivity_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtconnectivity_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\linguist_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\linguist_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtlocation_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtlocation_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtdeclarative_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtdeclarative_zh_CN.ts"
+"C:\Qt\5.15.1\mingw81_64\bin\lconvert.exe" -target-language zh-CN -locations none -o "D:\APPs\Translations\Qt5.15\qtmultimedia_zh_CN.ts" -i "D:\APPs\Translations\Qt5.15\qtmultimedia_zh_CN.ts"

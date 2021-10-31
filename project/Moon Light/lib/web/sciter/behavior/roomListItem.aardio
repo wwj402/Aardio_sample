@@ -1,8 +1,12 @@
 ﻿//roomListItem 房间列表项
+import console;
+import process;
 import process.openUrl;
 import win.clip;
 import public;
 import web.sciter.behavior;
+import fsys;
+import fsys.dlg;
 
 namespace web.sciter.behavior.roomListItem{	
 
@@ -12,7 +16,7 @@ namespace web.sciter.behavior.roomListItem{
 	}
 sinking = {
 	onMenuItemClick = function (scTarget,scOwner,reason,behaviorParams) { 
-    	// 在谁的上面点击右键
+		// 在谁的上面点击右键
 		var scPopupOwner = ..web.sciter.element( behaviorParams.he );
 /*
 		var scPopupOwnerUp;
@@ -29,11 +33,88 @@ sinking = {
 			case "open-url" {
 				..process.openUrl( scPopupOwner["room-url"] )
 			}
+			case "play-with" {
+				var temppath = ..fsys.dlg.open();
+				var playerpar = "";
+				if(#temppath){
+					select(..fsys.getFileName(temppath)) {
+						case "mpv.exe" {
+							playerpar = `--autofit-larger=80%x90% "{playurl}"`
+						}
+						case "youtube-dl.exe" {
+							playerpar = `--proxy socks5://127.0.0.1:10801 -f best -o "%(title)s.%(ext)s" "{url}"`
+						}
+						case "streamlink.bat" , "streamlink.exe" {
+							playerpar = `--http-proxy "socks5://127.0.0.1:10801" "{url}" "480p,720p,best"`
+						}
+						else {
+							playerpar = `"{playurl}"`
+						}
+					}
+					var exetorun = temppath;
+					var exepar = ..string.replace(playerpar, "@{url}", scPopupOwner["room-url"]);
+					if(..string.indexOf(exepar, "{playurl}")){
+						var playurl = ..win.invoke(
+							function(url){
+								import sdk;
+								return sdk(url).getStreamInfo(, 3).streamUrl;
+							}, scPopupOwner["room-url"] 
+						)
+						//var playurl = ..sdk(scPopupOwner["room-url"]).getStreamInfo(, 3).streamUrl;
+						if(#playurl){
+							exepar = ..string.replace(exepar, "@{playurl}", playurl);
+						}
+						else {
+							..win.msgboxErr("未能获取播放地址");
+						}
+						
+					}
+					select(..fsys.getExtensionName(exetorun)) {
+						case "bat", "cmd" {
+							var thrdcmd = ..thread.create(
+								function( ... ){
+									import console;
+									import process;
+									import win.clip;
+									console.open();
+									var exetorun, exepar = ...;
+							        win.clip.write(exepar)
+									exepar = ..console.getText("请粘贴，然后修改参数: ") 		
+									process(, exetorun ++ " " ++ exepar);
+								}, exetorun, exepar
+								
+							);
+						}
+						else {
+							..process.execute(exetorun, exepar);
+						}
+					}
+				}
+			}
 			case "copy-url"{
-				..win.clip.write( scPopupOwner["room-url"] )
+				..win.clip.write( scPopupOwner["room-url"] );
+			}
+			case "copy-playurl"{
+				var streamInfo, err = ..win.invoke(
+					function(url){
+						import sdk;
+						import thread.table;
+						var thrdTable = thread.table("weblayout");
+						if(thrdTable.rateflag){
+							return sdk( url ).getStreamInfo(, 3);
+						}
+						return sdk( url ).getStreamInfo();
+					},scPopupOwner["room-url"] 
+				);
+			
+				if( !streamInfo ){
+					..win.msgboxErr( err );
+					return ;
+				}
+				..win.clip.write( streamInfo.streamUrl );
 			}
 			case "delete-room" {
-				scPopupOwner.delete()
+				scPopupOwner.delete();
 			}
 			}
 		}
@@ -43,9 +124,9 @@ sinking = {
 } 
 
 	onButtonStateChanged = function (scTarget,scOwner,reason,behaviorParams) {
-    	var url = scTarget["room-url"]  
-    	if( url ){
-        	..public.playUrl( url )	
-    	}		
+		var url = scTarget["room-url"]  
+		if( url ){
+			..public.playUrl( url );
+		}		
 	}		
 }

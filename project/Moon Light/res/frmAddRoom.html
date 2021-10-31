@@ -1,4 +1,4 @@
-﻿<html>
+﻿<html lang=zh>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;chartset=utf-8">
 		<link rel="stylesheet" href="style/common.css">
@@ -63,51 +63,78 @@
 			height: *;
 			vertical-align: middle;
 		}
-		.main > .container .add-room-input
+		.main > .container > div
 		{
 			color: white;
-			margin: auto;
+			margin-top: 2dip;
 			margin-right: *;
 			margin-left: *;
 			width: 400dip;
-			position: absolute;
-			bottom: 20dip;
+			//position: absolute;
+			//bottom: 20dip;
 			flow: horizontal;
+			vertical-align: middle;
 		}
-		.main > .container .add-room-input #lable
+		.main > .container > div.play-proxy
+		{
+			margin-top: 20dip;
+		}
+		.main > .container #lable
 		{
 			display: inline-block;
-			//width: auto;
+			width: max-content;
 		}
-		.main > .container .add-room-input input
+		.main > .container input
 		{
 			width: *;
+			background-color: rgb(206, 94, 106);
 			background-image: url( edit-back.png );
 			background-repeat: expand;
 			background-position: 5 5 5 5;
 			color: white;
 		}
-		.main > .container .add-room-input .common-button
+		.main > .container > div > span.common-button
 		{
 			display: inline-block;
 			//width: auto;
 			behavior: clickable;
 		}
-		.main > div.common-title-bar > div.title {
-			assigned!: self:value = "添加直播间";
+		menu.context li[name="edit:undo"] label:lang(zh) { content: "撤销"; }
+		menu.context li[name="edit:redo"] label:lang(zh) { content: "重做"; }
+		menu.context li[name="edit:cut"] label:lang(zh) { content: "剪切"; }
+		menu.context li[name="edit:copy"] label:lang(zh) { content: "复制"; }
+		menu.context li[name="edit:paste"] label:lang(zh) { content: "粘贴"; }
+		menu.context li[name="edit:selectall"] label:lang(zh) { content: "全选"; }
+		.main > div.container > div.play-proxy > #lable:lang(zh) {
+			content: "代理服务器：";
 		}
-		.main > div.container > div.add-room-input > #lable {
-			assigned!: self:value = "直播间地址：";
+		.main > div.common-title-bar > div.title:lang(zh) {
+			content: "添加直播间";
 		}
-		.main > div.container > div.add-room-input > #add-room {
-			assigned!: self:value = "添加";
+		.main > div.container > div.add-room-input > #lable:lang(zh) {
+			content: "直播间地址：";
+		}
+		.main > div.container > div.add-room-input > #add-room:lang(zh) {
+			content: "添加";
+		}
+		.main > div.container > div.play-with > #lable:lang(zh) {
+			content: "播放器路径：";
+		}
+		.main > div.container > div.play-with > #add-player:lang(zh) {
+			content: "浏览";
+		}
+		.main > div.container > div.play-with-par > #lable:lang(zh) {
+			content: "播放器参数：";
+		}
+		.main > div.container > div.play-with-par > #player-play:lang(zh) {
+			content: "播放";
 		}
 	</style>
 	</head>
 	<body>
 		<div class="main">
 			<div class="common-title-bar" command="window-caption">
-				<div class=title>添加直播间</div>
+				<div class=title>Add live</div>
 				<div class="bottons">
 				  <a command="window-close">r</a>
 				  <a command="window-max">1</a>
@@ -116,10 +143,24 @@
 			</div>
 			<div class="container">
 				<span class="supported-website"></span>
+				<div class="play-proxy">
+					<span id="lable">proxy: </span>
+					<input type="text" name="player-proxy" value="socks://127.0.0.1:1081">
+				</div>
 				<div class="add-room-input">
-					<span id="lable">直播间地址：</span>
+					<span id="lable">Live address: </span>
 					<input type="text" name="room-url">
-					<span id="add-room" class="common-button">添加</span>
+					<span id="add-room" class="common-button">Add</span>
+				</div>
+				<div class="play-with">
+					<span id="lable">player: </span>
+					<input type="text" name="player-path">
+					<span id="add-player" class="common-button">Explore</span>
+				</div>
+				<div class="play-with-par">
+					<span id="lable">Parameters: </span>
+					<input type="text" name="player-par">
+					<span id="player-play" class="common-button">Play</span>
 				</div>
 			</div>
 		</div>

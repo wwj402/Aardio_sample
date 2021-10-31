@@ -4,6 +4,7 @@ import crypt;
 import web.script;
 import hpsocket.tcpPullClient;
 import win.ui;
+import win.clip;
 
 namespace sdk;
 class douyu{
@@ -14,73 +15,136 @@ class douyu{
 				server = "openapi-danmu.douyu.com";
 				port = 8601;
 		};
+		this.webapi = "api";
 		this.socket := ..hpsocket.tcpPullClient();
 		this._form := ..win.form();
-		this._form.messageOnly();
+		//this._form.messageOnly();
 		
 	}
-	getRoomId = function(){ 			
- 		var room = ..string.match( url, "<@www.douyu.com/@>(.+?)$" ) 	 
- 		// 如果全部都是数字
-/*
- 		if( !..string.match(room, "\D") ){
- 			return room; 
- 		}
-*/
- 			    	
-    	// 获取直播房间详情
-    	var html = http.get( "http://open.douyucdn.cn/api/RoomApi/room/" ++ room )
-    	if( !html )
-        	return null, "网络连接有误"; 
+	getRoomInfo = function(){
+		var ret = {};
+		try{
+				 
+				// 如果全部都是数字
+	/*
+				if( !..string.match(room, "\D") ){
+					return room; 
+				}
+	*/
+							
+			// 获取直播房间详情
+			var murl = ..string.replace(url, "@www", "m");
+			var html = http.get(murl);
+			if( !html ){
+				return null, "网络连接有误";
+			}
+			var room = ..string.match(html, 'rid"\\:(\\d{1,7}),"vipId');
+			room := ..string.match( url, "<@www.douyu.com/@>(.+?)$" ) 
+			var douyuapi = "http://capi.douyucdn.cn/api/v1/room/%s?aid=android&client_sys=android&time=%s&auth=%s";
+			var timestr = ..string.format("%i", tonumber(..time.now()));
+			var md5rb = "room/%s?aid=android&client_sys=android&time=%s";
+			md5rb = ..string.format(md5rb, room, timestr) ++ "1231"
+			var authstr = ..crypt.md5(md5rb, false);
+			if(this.webapi == "api"){
+				html = http.get( "http://open.douyucdn.cn/api/RoomApi/room/" ++ room );
+				if(!html){
+					this.webapi = "html";
+				}
+				else {
+					var r = ..web.json.parse( html )
+					if( r.error !== 0 )
+						return null, "信息数据解析有误";
+					ret.website = "douyu";
+					ret.roomUrl = url;
+					ret.roomId = r.data.room_id;
+					ret.ownerName = r.data.owner_name;
+					ret.roomName = r.data.room_name;
+					ret.avatarUrl = r.data.avatar;
+					ret.room_status = r.data.room_status;
+					ret.isLive = ret.room_status == "1";
+				}
+				
+			}
 	
-    	var r = ..web.json.parse( html )
-    	if( r.error !== 0 )
-        	return null, "信息数据解析有误";
-
-    	//return r.data.room_id ;
-    	return r.data;
-	}	
+			//..win.clip.write(html)
+			if(this.webapi == "html"){
+				html = http.get( url );
+				if(!html){
+					return null, "网络连接有误";
+				}
+				ret.roomId = ..string.match(html, "$ROOM\.room_id\s*=\s*([^;]+)\s*;");
+				ret.room_status = ..string.match(html, "$ROOM\.show_status\s*=\s*([^;]+)\s*;");
+				ret.avatarUrl = ..string.match(html, `$ROOM\.owner_avatar\s*=\s*"([^;]+)"\s*;`);
+				ret.avatarUrl = ..string.unescape(ret.avatarUrl);
+				var tempr = ..string.matches(html, `\<(\w+)\s+class="Title-header"\>([^<]+)\</\1\>`);
+				if(#tempr){
+					ret.roomName = tempr[1][2];
+				}
+				else {
+					ret.roomName = "";
+				}
+				
+				tempr = ..string.matches(html, `\<(\w+)\s+class="Title-anchorNameH2"[^>]*\>([^<]+)\</\1\>`);
+				if(#tempr){
+					ret.ownerName = tempr[1][2];
+				}
+				else {
+					ret.ownerName = "";
+				}
+				
+				ret.website = "douyu";
+				ret.roomUrl = url;
+				ret.isLive = ret.room_status == "1";
+			}
+		}
+		catch(e){
+			return null, e;
+		}
+		
+		//return r.data.room_id ;
+		return ret;
+	}
 	getStreamInfo1 = function( cdn = "主线路", bitrate = "超清"){	   
-		var roomId = this.getRoomId().room_id;
+		var roomId = this.getRoomInfo().roomId;
 		if( !roomId ){
 			return null, "获取房间基本信息失败"; 
 		}
 		this.roomId = roomId;
-				       	
-    	var key = "zNzMV1y4EMxOHS6I5WKm"
-    	var apiUrl = "http://capi.douyucdn.cn/api/v1/"
-    	
-   		var path = "room/" ++ roomId  ++ "?" ++ "aid=wp&client_sys=wp&time=" ++ tonumber(..time())
-    	var url = apiUrl ++ path ++ "&auth=" ++ ..crypt.md5( path ++ key, false ) 
-    	
-    	var html = http.get( url )
-    	if( !html ){
-        	return null, "网络连接有误"; 
-    	}
+							
+		var key = "zNzMV1y4EMxOHS6I5WKm"
+		var apiUrl = "http://capi.douyucdn.cn/api/v1/"
+		
+			var path = "room/" ++ roomId  ++ "?" ++ "aid=wp&client_sys=wp&time=" ++ tonumber(..time())
+		var url = apiUrl ++ path ++ "&auth=" ++ ..crypt.md5( path ++ key, false ) 
+		
+		var html = http.get( url )
+		if( !html ){
+			return null, "网络连接有误"; 
+		}
 	
-    	var r = ..web.json.parse(html)
-    	if( r.error === 0 ){
-        	var data = r.data;
-        	var lastUrl;
+		var r = ..web.json.parse(html)
+		if( r.error === 0 ){
+			var data = r.data;
+			var lastUrl;
 			if( #data.rtmp_multi_bitrate[ bitrateMap[bitrate] ] ){
 				lastUrl = data.rtmp_multi_bitrate[ bitrateMap[bitrate] ] 
 			}
 			else {
 				lastUrl = data.rtmp_live 
 			}
-        	
-        	return {
-        		website = "douyu";
-        		roomUrl = "https://www.douyu.com/" ++  roomId;
-        		roomId = this.roomId;
-        		ownerName = data.nickname;
-        		roomName = data.room_name;
-        		avatarUrl = data.owner_avatar;	
-        		isLive = data.show_status == "1";
-            	streamUrl = data.rtmp_url ++ "/" ++ lastUrl;	
-        	}
-    	} 
-    	return null, "地址数据解析有误"; 		
+			
+			return {
+				website = "douyu";
+				roomUrl = "https://www.douyu.com/" ++  roomId;
+				roomId = this.roomId;
+				ownerName = data.nickname;
+				roomName = data.room_name;
+				avatarUrl = data.owner_avatar;	
+				isLive = data.show_status == "1";
+				streamUrl = data.rtmp_url ++ "/" ++ lastUrl;	
+			}
+		} 
+		return null, "地址数据解析有误"; 		
 	}
 	get_tt = function(){
 		var tt = ..time.now(); 
@@ -94,32 +158,40 @@ class douyu{
 		var room_baseurl = "https://m.douyu.com/";
 		var response = http.get(room_baseurl ++ rid);
 		var pattern = '"rid"\\:(\\d+)';
-		var real_rid = ..string.match(response, pattern);
+		var real_rid = rid;
+		if(response){
+			real_rid = ..string.match(response, pattern);
+		}
+
 		if(real_rid != rid){
 			response = http.get(room_baseurl ++ real_rid);
 		}
 		var homejs = "";
 		pattern = "(function ub9[^\r\n]*).+?(var[^\r\n]*)"
-		var result = ..string.matches(response, pattern);
-		var str1 = ..string.replace(result[1][1], "eval.*;}", "strc;}");
-		homejs = str1 ++ result[1][2];
+		if(response){
+			var result = ..string.matches(response, pattern);
+			var str1 = ..string.replace(result[1][1], "eval.*;}", "strc;}");
+			homejs = str1 ++ result[1][2];
+		}
 		return homejs, real_rid;
 	}
 
 	get_sign = function(rid, post_v, tt, ub9){
-		var jsscript = ..web.script("JavaScript");
-		jsscript.addCode(ub9);
-		var str3 = jsscript.script.ub98484234();
-		str3 = ..string.replace(str3, "\(function[\s\S]*toString\(\)", "'");
-		var md5rb = ..crypt.md5(rid ++ '10000000000000000000000000001501' ++
-						tt ++ '2501' ++ post_v);
-		md5rb = ..string.lower(md5rb);
-		var str4 = "function get_sign(){var rb='" ++ md5rb ++ str3;
-		var str5 = ..string.replace(str4, "return rt;}[\s\S]*", "return re;};");
-		var str6 = ..string.replace(str5, '"v=.*&sign="\\+', "");
-		jsscript.reset();
-		jsscript.addCode(str6);
-		var sign = jsscript.xcall("get_sign", rid, '10000000000000000000000000001501', tt);
+		var sign = "";
+		if(#ub9){
+			var jsscript = ..web.script("JavaScript");
+			jsscript.addCode(ub9);
+			var str3 = jsscript.script.ub98484234();
+			str3 = ..string.replace(str3, "\(function[\s\S]*toString\(\)", "'");
+			var md5rb = ..crypt.md5(rid ++ '10000000000000000000000000001501' ++
+							tt ++ '2501' ++ post_v, false);
+			var str4 = "function get_sign(){var rb='" ++ md5rb ++ str3;
+			var str5 = ..string.replace(str4, "return rt;}[\s\S]*", "return re;};");
+			var str6 = ..string.replace(str5, '"v=.*&sign="\\+', "");
+			jsscript.reset();
+			jsscript.addCode(str6);
+			sign = jsscript.xcall("get_sign", rid, '10000000000000000000000000001501', tt);
+		}
 
 		return sign;
 	}
@@ -128,41 +200,48 @@ class douyu{
 		var result1 = "PKing";
 		return result1;
 	}
-	get_pre_url = function(rid, tt){
+	get_pre_key = function(rid, tt = ""){
 		var request_url = "https://playweb.douyucdn.cn/lapi/live/hlsH5Preview/" ++ rid;
 		var post_data = {
 			rid = rid;
 			did = "10000000000000000000000000001501";
 		}
-		var auth = ..string.lower(..crypt.md5(rid ++ tt));
+		var t13 = "";
+		if(#tt){
+			t13 = tt;
+		}
+		else {
+			t13 = tostring(..time.now().getMilliTime());
+		}
+		var auth = ..crypt.md5(rid ++ t13, false);
 		var header = {
 			['content-type'] = 'application/x-www-form-urlencoded';
 			rid = rid;
-			time = tt;
+			time = t13;
 			auth = auth;
 		}
 		var response = http.post(request_url, post_data, header);
-		response = ..web.json.parse(response);
-		var pre_url = "";
-		var pre_url_flag = false; 
-		if(response.error == 0){
+		response ?= ..web.json.parse(response);
+		var pre_key = "";
+		var pre_key_flag = false; 
+		if(response and response.error == 0){
 			var real_url = response.data.rtmp_live;
 			for(k,v in real_url){
 				if(v == "mix=1"){
-					pre_url_flag = true;
+					pre_key_flag = true;
 					break;
 				}
 			}
-			if(pre_url_flag){
-				pre_url = mix_room(rid);
+			if(pre_key_flag){
+				pre_key = mix_room(rid);
 			} else {
 				var pattern = "^[0-9a-zA-Z]*";
-				pre_url = ..string.match(real_url, pattern);
+				pre_key = ..string.match(real_url, pattern);
 			}	
 		}
-		return pre_url;
+		return pre_key;
 	}
-	get_sign_url = function(post_v, rid, tt, ub9){
+	get_sign_key = function(post_v, rid, tt, ub9, rate = 0){
 		var sign = this.get_sign(rid, post_v, tt, ub9);
 		var request_url = "https://m.douyu.com/api/room/ratestream";
 		var post_data = {
@@ -179,10 +258,10 @@ class douyu{
 			['User-Agent'] = 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36';
 		};
 		var response = http.post(request_url, post_data, header);
-		response = ..web.json.parse(response);
+		response ?= ..web.json.parse(response);
 		var result1 = "";
 		var result1_flag = false; 
-		if(response.code == 0){
+		if(response and response.code == 0){
 			var real_url = response.data.url;
 			for(k,v in real_url){
 				if(v == "mix=1"){
@@ -192,50 +271,115 @@ class douyu{
 			}
 			if(result1_flag){
 				result1 = mix_room(rid);
-			} else {
-				var pattern = "live/(\d{1,8}[0-9a-zA-Z]+)_?[\d]{0,4}/playlist";
+			}
+			else {
+				var pattern;
+				if(rate = 3){
+					pattern = "/(\d{1,8}[0-9a-zA-Z]+_?[\d]{0,4}).m3u8";
+				}
+				else {
+					pattern = "/(\d{1,8}[0-9a-zA-Z]+)_?[\d]{0,4}.m3u8";
+				}
 				result1 = ..string.match(real_url, pattern);
 			}	
-		} else {
+		}
+		else {
 			result1 = "";
 		}
 		return result1;
 	}
-	getStreamInfo = function( cdn = "主线路", bitrate = "超清"){
-		var data, err = this.getRoomId();
+	get_pc_url = function( cdn = "ws-h5", rate = 0){
+/*
+		通过PC网页端的接口获取完整直播源。
+		:param cdn: 主线路ws-h5、备用线路tct-h5
+		:param rate: 1流畅；2高清；3超清；4蓝光4M；0蓝光8M或10M
+		:return: JSON格式
+*/
+		var murl = ..string.replace(url, "@www", "m");
+		var html = http.get(murl);
+		if( !html ){
+			return null, "网络连接有误";
+		}
+		var rid = ..string.match(html, 'rid"\\:(\\d{1,7}),"vipId');
+		var did = "10000000000000000000000000001501";
+		html = http.get("https://www.douyu.com/" ++ rid);
+		if( !html ){
+			return null, "网络连接有误";
+		}
+		var func_ub9 = ..string.match(html, "(vdwdae325w_64we[\s\S]*function ub98484234[\s\S]*?)function");
+		func_ub9 ?= ..string.replace(func_ub9, "eval.*?;}", "strc;}");
+		var jsscript = ..web.script("JavaScript");
+		if( !#func_ub9 ){
+			return null, "无法解析数据";
+		}
+		jsscript.addCode(func_ub9);
+		var func_str = jsscript.script.ub98484234();
+		if( !#func_str ){
+			return null, "无法解析数据";
+		}
+		var v = ..string.match(func_str, "v=(\d+)");
+		var t10 = tostring(tonumber(..time()));
+		var md5rb = ..crypt.md5(rid ++ did ++ t10 ++ v, false);
+		var func_sign = ..string.replace(func_str, "return rt;}[\);]+", "return rt;}");
+		func_sign ?= ..string.replace(func_sign, "\(function \(", "function sign\(");
+		func_sign ?= ..string.replace(func_sign, "CryptoJS.MD5\(cb\).toString\(\)",
+																'"' ++ md5rb ++ '"');
+		jsscript.reset();
+		//..win.msgbox(func_sign);
+		jsscript.addCode(func_sign);
+		var params = jsscript.xcall("sign", rid, did, t10);
+		params = params ++ ..string.format("&cdn=%s&rate=%s", cdn, rate);
+		var url = "https://www.douyu.com/lapi/live/getH5Play/%s";
+		var response = http.post(..string.format(url, rid), params);
+		//..win.clip.write(response);
+		response = ..web.json.parse(response);
+		var real_url = "";
+		if(response["error"] == 0){
+			real_url = response.data.rtmp_url ++ "/" ++ response.data.rtmp_live;
+		}
+		//..console.dump(real_url);
+		return real_url;
+	}
+	getStreamInfo = function( cdn = "ws-h5", rate = 0){
+		var data, err = this.getRoomInfo();
 		if( !data ){
 			return null, "获取房间基本信息失败"; 
 		}
-
-		var roomId = data.room_id;
-		var real_url = ""; 
-		this.roomId = roomId;
-		var rid = roomId;
-		var tt = {this.get_tt()};
-		var url = this.get_pre_url(rid, tt[2]);
-		if(url != ""){
-			real_url = "http://tx2play1.douyucdn.cn/live/" ++ url ++ ".flv?uuid=";
-		} else {
-			var homejs, real_rid = this.get_homejs(rid);
-			real_url = this.get_sign_url(tt[3], real_rid, tt[1], homejs);
-			if(real_url != ""){
-				real_url = "http://tx2play1.douyucdn.cn/live/" ++ real_url ++ ".flv?uuid=";
-			} else {
-				if(data.room_status == "1"){
-        			return null, "地址数据解析有误";
-       			 }
+		var roomId = data.roomId;
+		var real_url = "";
+		try{
+			if(rate == 3){
+				real_url = this.get_pc_url(cdn, rate);
+				if(!#real_url){
+					real_url = this.get_pc_url();
+				}
+			}
+			else {
+				real_url = this.get_pc_url();
+			}
+			
+			if(!#real_url){
+				this.roomId = roomId;
+				var rid = roomId;
+				var tt = {this.get_tt()};
+				var key = this.get_pre_key(rid, tt[2]);
+				if(!#key){
+					var homejs, real_rid = this.get_homejs(rid);
+					key = this.get_sign_key(tt[3], real_rid, tt[1], homejs, rate);
+					if(!#key and data.room_status == "1"){
+						return null, "地址数据解析有误";
+					}
+				}
+				real_url = "http://dyscdnali1.douyucdn.cn/live/" ++ key ++ ".flv?uuid=";
 			}
 		}
-		return {
-        		website = "douyu";
-        		roomUrl = "https://www.douyu.com/" ++  roomId;
-        		roomId = this.roomId;
-        		ownerName = data.owner_name;
-        		roomName = data.room_name;
-        		avatarUrl = data.avatar;	
-        		isLive = data.room_status == "1";
-            	streamUrl = real_url;	
-        		};
+		catch(e){
+			return null, e; 
+		}
+
+		data.streamUrl = real_url;
+		return data;
+
 	}
 
 	sendData = function(s){
@@ -258,7 +402,7 @@ class douyu{
 	socketStop = function(){
 		this.logout();
 		this.socket.stop();
-		this._form.close();	
+		//this._form.close();	
 	}
 
 	connect = function(roomId,host="openbarrage.douyutv.com",port=8601){
@@ -327,7 +471,7 @@ class douyu{
 	
 	get_danmu = function(){
 		import console;
-		var data, err = this.getRoomId();
+		var data, err = this.getRoomInfo();
 		if(!data){
 			return ; 
 		}
@@ -336,7 +480,7 @@ class douyu{
 			this.socketStop();
 			..thread.stop();
 		}
-		this.connect(data.room_id, douyudanmu.server, douyudanmu.port);
+		this.connect(data.roomId, douyudanmu.server, douyudanmu.port);
 		this.keepliveid := this._form.addtimer( 
 				30000, function(hwnd,msg,id,tick){
 					import thread.table;
@@ -346,9 +490,9 @@ class douyu{
 						this.socket.start(
 									douyudanmu.server, douyudanmu.port, false);
 						this.sendData( "type@=loginreq/roomid@=" ++
-										data.room_id ++ "/" );
+										data.roomId ++ "/" );
 						this.sendData( "type@=joingroup/rid@=" ++
-										data.room_id ++ "/gid@=-9999/" );
+										data.roomId ++ "/gid@=-9999/" );
 					}
 					//..console.dump(thrdTable.current, ..thread.getId());
 					this.sendData( "type@=mrkl/" );
@@ -368,25 +512,25 @@ class douyu{
 	
 }
 namespace douyu{
-    info = {
-        name = "斗鱼";
-        url = "https://www.douyu.com/";
-    }
-   
-    
- 	canHandle = function(url){
-    	return ..string.match( url, "<@www.douyu.com/@>(.+?)$" ) 	
+	info = {
+		name = "斗鱼";
+		url = "https://www.douyu.com/";
+	}
+	
+	
+		canHandle = function(url){
+		return ..string.match( url, "<@www.douyu.com/@>(.+?)$" ) 	
 	} 
 	cdnNames = {
-    	"主线路";"备用线路5";"备用线路2"
+		"主线路";"备用线路5";"备用线路2"
 	}
 	bitrate = {
-    	"流畅";"高清";"超清"
+		"流畅";"高清";"超清"
 	}
 	cdnMap = {
-    	主线路 = "ws";
-    	备用线路5 =  "tct";
-    	备用线路2 = "ws2";    
+		主线路 = "ws";
+		备用线路5 =  "tct";
+		备用线路2 = "ws2";    
 	}
 	bitrateMap = {
 		流畅 = "middle";
@@ -421,8 +565,8 @@ namespace douyu{
 	};
 	
 	parse = function(param){ 
-    	if(!param) return null;
-    	
+		if(!param) return null;
+		
 		var list,k,v = {};
 		for line in ..string.lines(param,"/") { 
 			var nv = ..string.split(line,"<@=>",2);
@@ -434,6 +578,13 @@ namespace douyu{
 			}
 			
 		}
-		return list; 
+		return list;
 	};	     	
 }
+
+/*
+import console;
+console.open()
+console.dump(douyu("https://www.douyu.com/610588").getStreamInfo(, 3));
+execute("pause")
+*/

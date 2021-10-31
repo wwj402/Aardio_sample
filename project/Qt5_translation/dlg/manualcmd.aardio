@@ -1,0 +1,33 @@
+import win.ui;
+import process.popen;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=719;bottom=479)
+winform.add(
+button={cls="button";text="执行";left=630;top=20;right=705;bottom=45;ah=1;aw=1;tabstop=1;z=3};
+edit={cls="edit";left=75;top=20;right=615;bottom=45;ah=1;aw=1;edge=1;tabstop=1;z=2};
+edit2={cls="edit";left=15;top=65;right=705;bottom=470;ah=1;aw=1;edge=1;hscroll=1;multiline=1;tabstop=1;vscroll=1;z=4};
+static={cls="static";text="命令行";left=15;top=20;right=65;bottom=45;ah=1;aw=1;center=1;transparent=1;z=1}
+)
+/*}}*/
+
+winform.enableDpiScaling(false);
+winform.edit.text = qttranslator.mainForm.edit7.text;
+
+winform.button.oncommand = function(id,event){
+    if(#winform.edit.text){
+		var pcmdline = process.popen.cmd(winform.edit.text);
+		for( all,out,err in pcmdline.each() ){
+			winform.edit2.print(all);
+		}
+		pcmdline.close();
+    }
+
+}
+winform.onClose = function(hwnd,message,wParam,lParam){
+    qttranslator.mainForm.button8.disabled = false;
+
+}
+
+winform.show();
+win.loopMessage();
+return winform;

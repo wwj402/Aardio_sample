@@ -3,3 +3,6 @@
 **/dist/
 **/Debug/
 **/Download/
+**/setting.json
+**/venv/
+**/.idea/

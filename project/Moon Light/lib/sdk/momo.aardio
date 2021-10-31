@@ -26,7 +26,10 @@ class momo{
 			streamUrl = ret.data.url;
 			roomUrl = url;
 		} 
-	}	
+	}
+	getRoomInfo = function(){
+		return this.getStreamInfo();
+	}
 }
 namespace momo{
     info = {

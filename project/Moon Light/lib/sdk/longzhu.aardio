@@ -90,6 +90,9 @@ class longzhu{
 			return ret; 
 		}
 	}
+	getRoomInfo = function(){
+		return this.handle[liveType](url); 
+	}
 	getStreamInfo = function(){
 		return this.handle[liveType](url); 
 	}

@@ -15,9 +15,11 @@ import win.ui.shadow;
 
 import web.sciter;
 
+/*
 if(_STUDIO_INVOKED){
 	import web.sciter.inspector;
 }
+*/
 
 import web.sciter.fontAwesome;
 import web.sciter.behavior;
@@ -32,6 +34,109 @@ import helper;
 import public;
 import moonLight;
 
+var pydanmu = function(url){
+import py3;
+import console;
+import thread.command;
+var thrdPycode = /**
+url = '%s'
+print(url)
+try:
+    [i.cancel() for i in task.all_tasks()]
+except:
+    pass
+asyncio.ensure_future(getdanmu(url))
+**/;
+var listener = thread.command();
+listener.taskpyexec = function(url){
+	console.dump("taskpyexec");
+	//py3.execf(pyCode, url);
+	py3.execf("loop.call_soon(taskman, '%s')", url);
+	//py3.execf("asyncio.ensure_future(taskman_asy('%s'))", url);
+}
+listener.taskpymain = function(url){
+    	console.dump("taskpymain");
+		py3.main.taskman(url);
+	}
+
+py3.appendPath("\py\real-url-master\venv", "\py\real-url-master\venv\Lib\site-packages");
+py3.appendPath("\py\real-url-master\venv\Scripts", "\py\real-url-master\danmu");
+py3.export.aardio = {
+    pushdanmu = function(url, name, text, ...){
+    	thread.command.pypushdanmu(url, name, text);
+    };
+    danmuapi = function(){
+    	pylistener = thread.command();
+    	pylistener.pyinterface = function(url){
+ 			py3.execf(thrdPycode, url);
+			//py3.execf("loop.call_soon(taskman, '%s')", url);
+    	}
+    };
+}
+var pyCode = /**
+import aardio
+import time
+import asyncio
+from asyncio import QueueEmpty
+from danmaku import DanmakuClient
+
+
+async def printer(url, q):
+    while True:
+        try:
+            m = q.get_nowait()
+        except QueueEmpty:
+            m = await asyncio.sleep(1, {'msg_type': 'empty'})
+        if m['msg_type'] == 'danmaku':
+            aardio.pushdanmu(url, m["name"], m["content"])
+            # print(f'{m["name"]}：{m["content"]}')
+        else:
+            aardio.pushdanmu(url)
+
+async def getdanmu(url):
+    q = asyncio.Queue()
+    try:
+        dmc = DanmakuClient(url, q)
+        asyncio.ensure_future(printer(url, q))
+        await dmc.start()
+    except:
+        pass
+
+async def dmcstop(url):
+    q = asyncio.Queue()
+    dmc = DanmakuClient(url, q)
+    print('stopdmc')
+    await dmc.stop()
+
+@asyncio.coroutine
+def taskman_asy(url):
+    print(url)
+    yield from dmcstop(url)
+    yield from getdanmu(url)
+
+def taskman(url):
+    print(url)
+    try:
+        [i.cancel() for i in task.all_tasks()]
+    except:
+        pass
+    asyncio.ensure_future(getdanmu(url))
+
+url = '%s'
+loop = asyncio.new_event_loop()
+task = loop.create_task(getdanmu(url))
+aardio.danmuapi()
+print('run py3====================')
+try:
+    loop.run_forever()
+except:
+    print('stop py3====================')
+**/
+
+		py3.execf(pyCode, url);
+		var pyStdoutStr = tostring(py3.main.catchOutErr.value);
+		console.log(pyStdoutStr);	
+}
 
 var wb = web.sciter( mainForm )
 
@@ -44,7 +149,7 @@ import win.reg;
 import win.version;
 if(win.version.isWin7Later){
 	var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings");
-	reg.setDwValue("SecureProtocols",2720);	
+	reg.setDwValue("SecureProtocols",2688);
 }
 
 
@@ -69,7 +174,7 @@ var templateSciterScript = /***
 		{
 			what      : "#container.main > .right-side .container .room-list .item",
 			where     : "#container.main > .right-side .container .room-list",
-			container : "#container.main > .right-side .container .room-list"
+			container : "#container.main > .right-side .container .room-list",
 			//notBefore : "tbody>tr.fixed",
 			//autoScroll: false
 			};
@@ -78,11 +183,13 @@ var templateSciterScript = /***
 
 ***/
 
+/*
 if(_STUDIO_INVOKED){
 	var tempscript = string.replace(templateSciterScript,"@${URL}",
 				fsys.joinpath(io.fullpath("\"),"res\sciter\ddm2.tis"));
 	wb.doScript(tempscript);
 }
+*/
 	frmBar = mainForm.loadForm("\res\sciter\frmBar.aardio");
 	frmPlayer = web.sciter.behavior.player.frmPlayer;
 	playerFrmMgr = helper.formManager( frmPlayer );
@@ -126,23 +233,32 @@ if(_STUDIO_INVOKED){
 	playerFrmMgr.bindFullscreen( frmBar );
 //}
 
+win.ui.shadow( mainForm, 50, 3 )
+
+mainForm.enableDpiScaling();
+mainForm.show();
 var updateRoomInfo = function(roomInfo){
-	if( !roomInfo.website ){
-		error("参数 roomInfo 缺少直播平台名称",2)
+	try{
+		if( !roomInfo.website ){
+			error("参数 roomInfo 缺少直播平台名称",2)
+		}
+		if( !roomInfo.roomId ){
+			error("参数 roomInfo 缺少直播间号码",2)
+		} 
+	
+		var item = wb.querySelector( string.format(`.item[website="%s"][room-id="%s"]`, roomInfo.website, roomInfo.roomId) )
+		if( !item ){
+			return ; 
+		}
+	
+		item.live = tostring( roomInfo.isLive )
+		item.$1(".avatar").src = roomInfo.avatarUrl;
+		item.$1(".owner-name").innerText = roomInfo.ownerName;
+		item.$1(".owner-website-icon").innerText = roomInfo.roomName;
 	}
-	if( !roomInfo.roomId ){
-		error("参数 roomInfo 缺少直播间号码",2)
-	} 
-
-	var item = wb.querySelector( string.format(`.item[website="%s"][room-id="%s"]`, roomInfo.website, roomInfo.roomId) )
-	if( !item ){
-		return ; 
+	catch(e){
+		return null, e;
 	}
-
-	item.live = tostring( roomInfo.isLive )
-	item.$1(".avatar").src := roomInfo.avatarUrl;
-	item.$1(".owner-name").innerText = roomInfo.ownerName;
-	item.$1(".owner-website-icon").innerText = roomInfo.roomName;
 }
 
 var moonLightClient = moonLight();
@@ -152,6 +268,9 @@ moonLightClient.onUpdateRoomInfo = function(info){
 
 // 添加直播间
 var addRoom = function(roomInfo){
+	var roomList = wb.querySelector(".room-list")
+	var isExist;    
+    try{
 		if( !roomInfo.website ){
 			error("参数 roomInfo 缺少直播平台名称 website",2)
 		}
@@ -162,10 +281,7 @@ var addRoom = function(roomInfo){
 			error("参数 roomInfo 缺少直播间地址 roomUrl",2)
 		}
 		
-		var roomList = wb.querySelector(".room-list")
-		
 		// 检测直播间是否存在列表上	
-		var isExist;
 		roomList.enumQuery(
 			function(ltEle){
 				if( ltEle.website == roomInfo.website ?  ltEle["room-id"] == roomInfo.roomId ){
@@ -177,73 +293,76 @@ var addRoom = function(roomInfo){
 		if( isExist ){
 			return null, "该直播间已添加过"; 
 		}   		
-		
-		// 新增一个直播间	
-		var item = roomList.createElement( "li")
-		item.class = "item"
-		item.website = roomInfo.website;
-		item["room-id"] = tostring(roomInfo.roomId);
-		item["room-url"] = roomInfo.roomUrl;
-		item.name = "item-select"; /*单选必须有name属性*/
-		item["owner-name"] = roomInfo.ownerName;
-		item["avatar-url"] = roomInfo.avatarUrl;
-		item.live = roomInfo.isLive ? "true" : "false"
-		
-		// 加入主播头像
-		var avatar = item.createElement("img")
-		avatar.src = roomInfo.avatarUrl
-		avatar["room-url"] = roomInfo.roomUrl;
-		avatar.class = "avatar"
-		
-		// 主播信息区域
-		var ownerInfo = item.createElement( "div" )
-		ownerInfo.class = "owner-info";
-		
-		// 主播名字
-		var ownerName = ownerInfo.createElement("div", roomInfo.ownerName)
-		ownerName.class = "owner-name"
-		
-		var ownerWebsiteIcon = ownerInfo.createElement("div", roomInfo.roomName)
-		ownerWebsiteIcon.class = "owner-website-icon";
-		for(k,v in sdk.website){
-			if(v.sdk == item.website){
-				ownerWebsiteIcon.style["foreground-image"] = string.format(
-						"url(%sfavicon.ico)", v.url);
+    }
+    catch(e){
+    	return null, e;
+    }
+	// 新增一个直播间	
+	var item = roomList.createElement( "li")
+	item.class = "item"
+	item.website = roomInfo.website;
+	item["room-id"] = tostring(roomInfo.roomId);
+	item["room-url"] = roomInfo.roomUrl;
+	item.name = "item-select"; /*单选必须有name属性*/
+	item["owner-name"] = roomInfo.ownerName;
+	item["avatar-url"] = roomInfo.avatarUrl;
+	item.live = roomInfo.isLive ? "true" : "false"
+	
+	// 加入主播头像
+	var avatar = item.createElement("img")
+	avatar.src = roomInfo.avatarUrl
+	avatar["room-url"] = roomInfo.roomUrl;
+	avatar.class = "avatar"
+	
+	// 主播信息区域
+	var ownerInfo = item.createElement( "div" )
+	ownerInfo.class = "owner-info";
+	
+	// 主播名字
+	var ownerName = ownerInfo.createElement("div", roomInfo.ownerName)
+	ownerName.class = "owner-name"
+	
+	var ownerWebsiteIcon = ownerInfo.createElement("div", roomInfo.roomName)
+	ownerWebsiteIcon.class = "owner-website-icon";
+	for(k,v in sdk.website){
+		if(v.sdk == item.website){
+			ownerWebsiteIcon.style["foreground-image"] = string.format(
+					"url(%sfavicon.ico)", v.url);
 /*
 $(#left).style["background-image"] = "url(file://d:/1.jpg)"; // or 
 $(#left).style["background-image"] = [url:"file://d:/1.jpg"]; // CSS "functions" are tuples in terms of script
 */
-				break;
-			}
-		
+			break;
 		}
-		
-		// 加入在线状态
-		var liveState = item.createElement("div")
-		liveState.class = "live-state"
-		
-		// 如果主播在线就把这行选中
-		if( roomInfo.isLive ){
-			roomList.enumQuery(
-				function(ltEle){
-						ltEle.state.checked = false
-				},"li.item"
-			)
-			item.state.checked = true    			
-		}
-		
-		// 滚动条拉到最后
-		item.scrollToView()
-		
-		moonLightClient.thWorks.push( roomInfo )
-		
-		return true; 			
+	
+	}
+	
+	// 加入在线状态
+	var liveState = item.createElement("div")
+	liveState.class = "live-state"
+	
+	// 如果主播在线就把这行选中
+	if( roomInfo.isLive ){
+		roomList.enumQuery(
+			function(ltEle){
+					ltEle.state.checked = false
+			},"li.item"
+		)
+		item.state.checked = true    			
+	}
+	item.update()
+	
+	// 滚动条拉到最后
+	//item.scrollToView()
+	
+	moonLightClient.thWorks.push( roomInfo )
+	
+	return true; 			
 }
-
 
 // 定时刷新主播信息
 mainForm.addtimer( 
-	90000,
+	120000,
 	function(hwnd,msg,id,tick){
 		wb.querySelector(".room-list").enumQuery(
 			function(ltEle){
@@ -256,7 +375,7 @@ mainForm.addtimer(
 var addDanmu = function(sdk, interhtml, ...){
 	var danmulist = wb.querySelector( "#container.main .right-side .container .danmu" );
 	if( !danmulist ){
-		return ; 
+		return ;
 	}
 	if(danmulist.childCount() > 66){
 		for(i,eleChild in danmulist.eachChild(1, danmulist.childCount() - 66, 1)){
@@ -266,10 +385,14 @@ var addDanmu = function(sdk, interhtml, ...){
 	if( sdk ? interhtml ){
 		var item = danmulist.createElement( "li");
 		item.innerHTML = interhtml;
-		item.scrollToView();
+		if(wb.querySelector(
+			'.tabs > .strip > [panel="panel-danmu"]').state.current){
+			item.scrollToView();
+		}
 	}
 
 }
+
 import thread.command;
 var listener = thread.command();
 listener.pushdanmu = function(sdk, s, txt, ...){
@@ -297,6 +420,18 @@ listener.pushdanmu = function(sdk, s, txt, ...){
 		}
 
 }
+listener.pypushdanmu = function(url, name, text, ...){
+	var interhtml;
+		if(#name){
+			var danmutime = tostring(time(time(), "%H:%M:%S"));
+			var site = string.split(url, "<.>");
+			var room = string.split(url, "</>");
+			var htmls = /*{%s: %s}<span id="level">[%s]<br></span><span id="nn">%s: </span><span id="txt">%s</span>*/; 
+			interhtml = string.format(htmls, site[2], room[#room], danmutime, name, text);
+			addDanmu(sdk, interhtml, ...);
+			thread.command.assRecorder(name, text);
+		}
+}
 listener.sidebarCtrl = function(){
 	if(thread.get("sidebarchecked")){
 		wb.$1("#container.main .right-side").style["visibility"] = "visible";
@@ -308,63 +443,100 @@ listener.sidebarCtrl = function(){
 
 import thread.table;
 var thrdTable = thread.table("weblayout",true/*清空*/ );
+var thrdHandle, thrdId;
+var mpv = web.sciter.behavior.player.mpv;
 
 var playUrl = function(url){
-	var mpv = web.sciter.behavior.player.mpv;
-	mpv.stop();
-	mpv.loadFile("\res\loading.MP4")
+	if(!mpv.getProperty("path", "string")){
+		mpv.loadFile("\res\loading.MP4");	
+	}
+	else {
+		mpv.stop();
+	}
+	mpv.setOption("osd-msg1", "解析视频中。。。");
 	// 获取直播信息 
 	var streamInfo, err = win.invoke(
 		function(url){
 			import sdk;
-
-			return sdk( url ).getStreamInfo(); 
-		},url 
+			import thread.table;
+			var thrdTable = thread.table("weblayout");
+			if(thrdTable.rateflag){
+				return sdk( url ).getStreamInfo(, 3);
+			}
+			return sdk( url ).getStreamInfo();
+		}, url
 	);
 
 	if( !streamInfo ){
-		mainForm.msgboxErr( err )
+		mainForm.msgboxErr( err );
 		return ; 
 	}
 /*
 	import console
 	console.dumpJson(streamInfo)
 */
-	thread.invoke( 
-		function(streamInfo){
-			import console;
-			import sdk;
-			import sdk.danmakurecorder;
-			import thread.table;
-			import thread.command;
-			
-			var thrdTable = thread.table("weblayout");
-			thrdTable.current = thread.getId();
-			
-			thread.command.stopdanmu();
-			
-			if(streamInfo.website == "douyu"){
-				if(thrdTable.assflag){
-					var d = sdk["danmakurecorder"](streamInfo.roomId);
-					d.initDRecorder();
-				}
-
-				var v = sdk[streamInfo.website](streamInfo.roomUrl);
-				v.get_danmu();
+	try{
+		if( streamInfo.isLive ){
+			// 记录当前播放的直播间地址
+			var player = wb.getEle("playerContainer");	
+			player.url = url;
+			//mpv.loadFile( streamInfo.streamUrl );
+			if(#streamInfo.streamUrl){
+				mpv.loadUrl( streamInfo.streamUrl );
 			}
-
-		}, streamInfo
-	)
-	if( streamInfo.isLive ){
-		// 记录当前播放的直播间地址
-		var player = wb.getEle("playerContainer")
-		
-		player.url = url
-		mpv.loadUrl( streamInfo.streamUrl )
+			else {
+				mpv.setOption("osd-msg1", "未能解析视频，请重新加载");
+			}
+			
+		}
+		else {
+			mainForm.msgboxErr("该主播没有开播");
+		}
+/*
+		thread.invoke( 
+			function(streamInfo){
+				import console;
+				import sdk;
+				import sdk.danmakurecorder;
+				import thread.table;
+				import thread.command;
+				
+				var thrdTable = thread.table("weblayout");
+				thrdTable.current = thread.getId();
+				
+				thread.command.stopdanmu();
+				
+				if(streamInfo.website == "douyu"){
+					if(thrdTable.assflag){
+						var d = sdk["danmakurecorder"](streamInfo.roomId);
+						d.initDRecorder();
+					}
+	
+					var v = sdk[streamInfo.website](streamInfo.roomUrl);
+					v.get_danmu();
+				}
+	
+			}, streamInfo
+		);
+*/
+		thread.invoke( 
+			function(pydanmu, url){
+				import thread.table;
+				import thread.command;
+				var thrdTable = thread.table("weblayout");
+				//thread.command.sendInvoke("pyinterface", url);
+				//thread.command.sendInvoke("taskpyexec", url);
+				thread.command.sendInvoke("taskpymain", url);
+				if(!thrdTable.pythrdid){
+					thrdTable.pythrdid = ..thread.getId();
+					pydanmu(url);
+				}
+			}, pydanmu, url
+		);
 
 	}
-	else {
-		mainForm.msgboxErr("该主播没有开播")
+	catch(e){
+		return null, e; 
 	}
 	return streamInfo; 	
 }
@@ -425,15 +597,13 @@ var saveSetting = function(){
 				})
 		},"li"
 	)
-	var json = web.json.stringify( ret, true )
-	string.save("\setting.json",json )
+	if(#ret.data.roomList){
+		var json = web.json.stringify( ret, true )
+		string.save("\setting.json",json )
+	}
+
 }
 
-readSetting()
-
-mainForm.onClose = function(hwnd,message,wParam,lParam){
-	saveSetting()
-}
 
 wb.onButtonClick = {
 	["show-add-room-form"] = function (scTarget,scOwner,reason,behaviorParams) {
@@ -446,21 +616,31 @@ wb.onButtonClick = {
 		} else {
 			thrdTable.assflag = false;
 		}
-		
+	};
+	["rate-chq"] = function (scTarget,scOwner,reason,behaviorParams) {
+		if(scTarget.state["checked"]){
+			thrdTable.rateflag = true;
+		} else {
+			thrdTable.rateflag = false;
+		}
 	};
 }
 
 wb.onVisualStateChanged =
-    				function (scTarget,scOwner,shown,behaviorParams) {
+					function (scTarget,scOwner,shown,behaviorParams) {
 	if(scTarget.class == "right-side panel"){
 		frmBar.setRect(frmPlayer.getRect(true));
 	}
 }
 
-win.ui.shadow( mainForm, 50, 3 )
-
-mainForm.enableDpiScaling();
-mainForm.show(); 
+readSetting()
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+    moonLightClient.thWorks.clear();
+    if(thrdTable.thrdHandle){
+    	..raw.closehandle(thrdTable.thrdHandle);
+    }
+	saveSetting();
+	moonLightClient.thWorks.waitClose();
+}
 win.loopMessage(); 
-
-moonLightClient.thWorks.waitClose()
+moonLightClient.thWorks.waitClose();

@@ -1,0 +1,15 @@
+@echo off
+setlocal enabledelayedexpansion
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtquickcontrols\qtquickcontrols.pro" -ts "D:\APPs\Translations\Qt5.15\qtquickcontrols.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qttools\src\designer\designer.pro" -ts "D:\APPs\Translations\Qt5.15\designer.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qttools\src\assistant\assistant.pro" -ts "D:\APPs\Translations\Qt5.15\assistant.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qttools\src\assistant\help\help.pro" -ts "D:\APPs\Translations\Qt5.15\qt_help.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtscript\qtscript.pro" -ts "D:\APPs\Translations\Qt5.15\qtscript.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtbase\qtbase.pro" -ts "D:\APPs\Translations\Qt5.15\qtbase.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtxmlpatterns\qtxmlpatterns.pro" -ts "D:\APPs\Translations\Qt5.15\qtxmlpatterns.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtquickcontrols2\qtquickcontrols2.pro" -ts "D:\APPs\Translations\Qt5.15\qtquickcontrols2.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtconnectivity\qtconnectivity.pro" -ts "D:\APPs\Translations\Qt5.15\qtconnectivity.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qttools\src\linguist\linguist.pro" -ts "D:\APPs\Translations\Qt5.15\linguist.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtlocation\qtlocation.pro" -ts "D:\APPs\Translations\Qt5.15\qtlocation.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtdeclarative\qtdeclarative.pro" -ts "D:\APPs\Translations\Qt5.15\qtdeclarative.ts"
+"C:\Qt\5.15.2\mingw81_64\bin\lupdate.exe" -locations relative "C:\Qt\5.15.2\Src\qtmultimedia\qtmultimedia.pro" -ts "D:\APPs\Translations\Qt5.15\qtmultimedia.ts"

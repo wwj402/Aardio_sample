@@ -22,6 +22,8 @@ import web.sciter.behavior.supportedWebsite;
 
 import sdk;
 import public;
+import fsys;
+import fsys.dlg;
 
 var wb = web.sciter( winform ) 
 
@@ -32,35 +34,94 @@ if( isDebug ){
 
 wb.go("/res/frmAddRoom.html")
 wb.wait();
+/*
 if(_STUDIO_INVOKED){
 	wb.doScript(`
 		if( view.connectToInspector ) // the view is in debug mode
 			view.connectToInspector();
 	`)	
 }
+*/
 
 wb.onButtonClick = {
-    ["add-room"] = function(){
-        var url = wb.getEle("room-url").value;
-        if( !#url ){
-            winform.msgboxErr("直播间网址不能为空")
-        	return ; 
-        }
-        
-        if( !sdk.handle( url ) ){
-            winform.msgboxErr("暂时不支持该直播平台")
-        	return ;        	
-        }
-
-        var streamInfo = public.playUrl( url )	
-		if( streamInfo ){
-        	var ok, err = public.addRoom( streamInfo )
-        	if( !ok ){
-            	winform.msgboxErr( err )
-        	}   			
+	["add-room"] = function(){
+		var url = wb.getEle("room-url").value;
+		if( !#url ){
+			winform.msgboxErr("直播间网址不能为空")
+			return ; 
 		}
-    } 
+		
+		if( !sdk.handle( url ) ){
+			winform.msgboxErr("暂时不支持该直播平台")
+			return ;        	
+		}
+
+		var proxy = wb.getEle("player-proxy").value;
+		var player = wb.getEle("player-path").value;
+		var playerpara = wb.getEle("player-par").value;
+		var streamInfo;
+		if(#proxy){
+			try{
+				streamInfo = public.playUrl(url, proxy);
+			}
+			catch(e){
+				streamInfo = public.playUrl(url);
+			}
+		}
+		else {
+			streamInfo = public.playUrl(url);
+		}
+	
+		if( streamInfo ){
+			var ok, err = public.addRoom( streamInfo )
+			if( !ok ){
+				winform.msgboxErr( err )
+			}   			
+		}
+	};
+	["add-player"] = function(){
+		var playpath = wb.getEle("player-path");
+		var tempdir = fsys.dlg.open( , , fsys.getParentDir("playpath.value"));
+		if(#tempdir){
+			playpath.value = tempdir;
+		}
+		var playpar = wb.$1(".main > div.container > div.play-with-par > [name='player-par']");
+		select(fsys.getFileName(playpath.value)) {
+			case "mpv.exe" {
+				playpar.value = `--autofit-larger=80%x90% "{playurl}"`
+			}
+			case "youtube-dl.exe" {
+				playpar.value = `--proxy socks5://127.0.0.1:1081 -f best -o "%(title)s.%(ext)s" "{url}"`
+			}
+			case "streamlink.bat" , "streamlink.exe" {
+				playpar.value = `--http-proxy "http://127.0.0.1:1082" "{url}" "480p,720p,best"`
+			}
+				else {
+					playpar.value = `"{playurl}"`
+			}
+		}
+	};
+	["player-play"] = function(){
+		var playpar = wb.$1(".main > div.container > div.play-with-par > [name='player-par']");
+		var url = wb.getEle("room-url");
+		var exetorun = wb.getEle("player-path").value;
+		var exepar = string.replace(playpar.value, "@{url}", url.value);
+		if(string.indexOf(exepar, "{playurl}")){
+			var playurl = sdk(url.value).getStreamInfo(, 3).streamUrl;
+			exepar = string.replace(exepar, "@{playurl}", playurl);
+		}
+		select(fsys.getExtensionName(exetorun)) {
+			case "bat", "cmd" {
+				process(, exetorun ++ " " ++ exepar);
+			}
+			else {
+				process.execute(exetorun, exepar);
+			}
+		}
+	};
+	
 }
+
 
 win.ui.shadow( winform, 50, 3 )
 winform.enableDpiScaling();
