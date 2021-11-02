@@ -4,5 +4,10 @@
 **/Debug/
 **/Download/
 **/setting.json
-**/venv/
+**/py/*
+!**/py/venv/
+**/py/venv/*
+!**/py/venv/Lib/
+**/py/venv/Lib/*
+!**/py/venv/Lib/site-packages/
 **/.idea/
